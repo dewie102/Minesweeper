@@ -1,2 +1,5 @@
-# JavaProject_TeamN
-Template repo for Java project
+# JavaProject Team 5
+
+Project Team
+* Zack Romasz
+* Genevieve Veres
