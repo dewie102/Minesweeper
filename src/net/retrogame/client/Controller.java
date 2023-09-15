@@ -1,15 +1,21 @@
 package net.retrogame.client;
 
+import net.retrogame.Board;
+
 class Controller {
-    public boolean retry = false;
+    private boolean retry = false;
+    private Board board;
+    private boolean playerIsClicking = true; //TODO: move this to a Player class if we need one
 
     public void newGame() {
+        boolean gameOver = board.isGameOver();
+
         welcome();
-        instantiateBoard();
-        //while (!gameOver) {
-        //    play();
-        //    board.isGameOver();
-        //}
+        createDefaultBoard();
+        while (!gameOver) {
+            play();
+            gameOver = board.isGameOver();
+        }
         goodbye();
         promptUserForRetry();
 
@@ -19,7 +25,23 @@ class Controller {
 
     }
 
-    private void instantiateBoard() {
+    // TODO: asking user for input
+    private void createDefaultBoard() {
+        // Will ask user at some point but for now take defaults
+        board = new Board(9, 9, 9);
+        board.instantiateBoard();
+    }
+
+    private void play() {
+        board.showBoard();
+        promptUserForAction();
+    }
+
+    public void promptUserForAction() {
+
+    }
+
+    public void coordOrToolSwap() {
 
     }
 
@@ -28,6 +50,11 @@ class Controller {
     }
 
     private void promptUserForRetry() {
+        String userInput = null;
+        //sout prompt for user
+        //scanner scans and saves in userInput
+        //parse userInput for boolean value
+        //setRetry(parsed value)
 
     }
 
