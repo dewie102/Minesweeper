@@ -27,17 +27,13 @@ public class Board {
     }
     
     public void showBoard() {
-        String testGray = "\u001B[100m";
-        String testReset = "\u001B[0m";
-    
+        // TODO: Make this more dynamic to scale with the rows and columns
         System.out.println("     1     2     3     4     5     6     7     8     9   ");
         System.out.println("  ╔═════╦═════╦═════╦═════╦═════╦═════╦═════╦═════╦═════╗");
         for(int row = 0; row < getRows(); row++) {
             System.out.print((char)('A' + row) + " ║"); // Left border
             for(int column = 0; column < getColumns(); column++) {
-                // Temporary
-                int tileId = tiles.get(row).get(column).getHowManyNeighborsHaveBombs();
-                System.out.printf("%s  %s%s%s║", testGray, tileId, tileId >= 10 ? " " : "  ", testReset);
+                System.out.printf("%s║", tiles.get(row).get(column).displayTile());
             }
             System.out.print("\n"); // newline
             if(row != getRows() - 1) {
@@ -53,9 +49,19 @@ public class Board {
             tiles.add(new ArrayList<>());
             for(int column = 0; column < getColumns(); column++) {
                 tiles.get(row).add(new Tile());
-                tiles.get(row).get(column).setHowManyNeighborsHaveBombs((row*getColumns()) + column);
+                tiles.get(row).get(column).setNumberOfBombsNearby((row*getColumns()) + column);
+                
+                // TODO: Get rid of this as this just uncovers even tiles
+                if((row*getColumns()+column) % 2 == 0)
+                {
+                    tiles.get(row).get(column).setState(TileState.UNCOVERED);
+                }
             }
         }
+        
+        // TODO: Get rid of these as well, they are just temporary to see how different tile display
+        tiles.get(0).get(0).setAsBomb(true);
+        tiles.get(getRows() - 1).get(getColumns() - 1).setState(TileState.FLAGGED);
     }
     
     private void placeBombsRandomly() {
