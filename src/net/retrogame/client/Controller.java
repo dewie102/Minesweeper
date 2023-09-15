@@ -4,13 +4,13 @@ import com.apps.util.Prompter;
 import net.retrogame.Board;
 
 import java.sql.SQLOutput;
+import java.util.Locale;
 import java.util.Scanner;
 
 class Controller {
     private final static Prompter prompter = new Prompter(new Scanner(System.in));
 
     private boolean retry = false;
-    private String userInput;
     private Board board;
     private boolean playerIsClicking = true; //TODO: move this to a Player class if we need one
 
@@ -44,17 +44,37 @@ class Controller {
         promptUserForAction();
     }
 
-    public void promptUserForAction() {
+    private void promptUserForAction() {
+        String userInput = null;
+        boolean validInput = false;
         System.out.println("What would you like to do next?");
 
         System.out.println("You are currently "+toolVerbPresentTense()+".");
         userInput = prompter.prompt("Enter the coordinates of the tile you would like to "+ toolVerb() +
-                ", or enter [S] to [S]wap over to "+toolVerbPresentTense()+" mode.");
+                " in column-row order with no spaces (e.g. B8)," +
+                " or enter [S] to [S]wap over to "+toolVerbPresentTense()+" mode.");
+
+        while(!validInput) {
+            if (userInput.toUpperCase().trim().equals("S")){
+                setPlayerIsClicking(!isPlayerClicking());
+                validInput = true;
+            }
+            else if (userInput.trim().length()==2){
+                //TODO: figure out what to do here.... could still be invalid :(
+                //might have to be a nested loop. SAD.
+            }
+            else {
+                userInput = prompter.prompt("Please enter a valid input. Valid inputs are " +
+                        "the coordinates of the tile you would like to "+ toolVerb() +
+                        " in column-row order with no spaces (e.g. B8)," +
+                        " or [S] to [S]wap over to "+toolVerbPresentTense()+" mode.");
+            }
+        }
     }
 
-    public String toolVerbPresentTense() {
+    private String toolVerbPresentTense() {
         String tool = null;
-        if (playerIsClicking) {
+        if (isPlayerClicking()) {
             tool = "clicking";
         }
         else {
@@ -63,9 +83,9 @@ class Controller {
         return tool;
     }
 
-    public String toolVerb() {
+    private String toolVerb() {
         String tool = null;
-        if (playerIsClicking) {
+        if (isPlayerClicking()) {
             tool = "click";
         }
         else {
@@ -85,15 +105,16 @@ class Controller {
     }
 
     private void promptUserForRetry() {
+        String userInput = null;
         boolean validInput = false;
 
         userInput = prompter.prompt("Would you like to play again? Enter [Y] to start a new game" +
                 "or [N]o to quit.");
         while(!validInput) {
-            if (userInput.equals("Y")) {
+            if (userInput.toUpperCase().trim().equals("Y")) {
                 setRetry(true);
                 validInput = true;
-            } else if (userInput.equals("N")) {
+            } else if (userInput.toUpperCase().trim().equals("N")) {
                 setRetry(false);
                 validInput = true;
             } else {
@@ -106,7 +127,15 @@ class Controller {
         return retry;
     }
 
-    public void setRetry(boolean retry) {
+    private void setRetry(boolean retry) {
         this.retry = retry;
+    }
+
+    public boolean isPlayerClicking() {
+        return playerIsClicking;
+    }
+
+    public void setPlayerIsClicking(boolean playerIsClicking) {
+        this.playerIsClicking = playerIsClicking;
     }
 }
