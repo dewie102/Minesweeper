@@ -2,7 +2,7 @@ package net.retrogame;
 
 import java.util.ArrayList;
 
-class Board {
+public class Board {
     private static final int DEFAULT_ROW_COLUMN_SIZE = 9;
     private static final int DEFAULT_NUMBER_OF_BOMBS = 10;
     
