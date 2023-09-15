@@ -93,6 +93,10 @@ public class Board {
     
     }
     
+    public void doAction(String action) {
+        System.out.println("doAction did something!");
+    }
+    
     public int getRows() {
         return rows;
     }
