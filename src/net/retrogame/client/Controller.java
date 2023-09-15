@@ -4,6 +4,9 @@ import com.apps.util.Prompter;
 import net.retrogame.Board;
 import java.util.Locale;
 import java.util.Scanner;
+import com.apps.util.Console;
+
+//TODO: include some
 
 class Controller {
     private final static Prompter prompter = new Prompter(new Scanner(System.in));
@@ -20,8 +23,9 @@ class Controller {
         while (!board.isGameOver()) {
             play();
         }
-        goodbye(); //TODO: swap these, and only call goodbye if retry is F?
         promptUserForRetry();
+        goodbye(); //TODO: swap these, and only call goodbye if retry is F?
+
 
     }
 
@@ -33,11 +37,12 @@ class Controller {
     // TODO: asking user for input
     private void createDefaultBoard() {
         // Will ask user at some point but for now take defaults
-        board = new Board(9, 9, 9);
+        board = new Board(9, 9, 10);
         board.instantiateBoard();
     }
 
     private void play() {
+        Console.clear();
         board.showBoard();
         promptUserForAction();
     }
@@ -88,26 +93,72 @@ class Controller {
     private boolean areValidCoords(String input) {
 
         boolean isValid = false;
-        String firstChar = null;
-        String secondChar = null;
-        String thirdChar = null;
 
-
-        //TODO: determine how to interpret whether coords are valid or not
         if (input.length()==2) {
-            firstChar = String.valueOf(input.charAt(0)); //should be at number between 1 and the num columns
-            secondChar = String.valueOf(input.charAt(1)); //should be a letter between A and the num rows
+            isValid = areValidCoordsLength2(input);
         }
 
         if (input.length()==3) {
-            String row = input.substring(0,1);
-            String col = String.valueOf(input.charAt(3));
+            isValid = areValidCoordsLength3(input);
         }
 
         return isValid;
     }
 
+    private boolean areValidCoordsLength2(String input) {
 
+        boolean inputIsValid = true;
+        Character firstChar = input.charAt(0);
+        Character secondChar = input.charAt(1);
+
+        //fail scenario 1 - first character is not a digit
+        if (!Character.isDigit(firstChar)) {
+               inputIsValid = false;
+        }
+           //what the HECK
+        //fail scenario 2 - first character is a digit, but it's not in the range of valid columns
+        else if(!(0 < Character.getNumericValue(firstChar) && Character.getNumericValue(firstChar) <= board.getColumns())){
+               inputIsValid = false;
+        }
+        //fail scenario 3 - first char is good, but second char is not Alpha
+        else if (!Character.isAlphabetic(secondChar)) {
+            inputIsValid = false;
+        }
+        //fail scenario 4 - first char is good, and second char is alpha, but it's not in the valid range
+        else if (!('A' <= secondChar && secondChar <= ('A' + (board.getRows() - 1 )))) {
+            inputIsValid = false;
+        }
+
+        //if you never hit a fail scenario this stayed true
+        return inputIsValid;
+    }
+
+    private boolean areValidCoordsLength3(String input) {
+        boolean inputIsValid = true;
+        String firstTwoChars = input.substring(0,1);
+        Character thirdChar = input.charAt(2);
+
+        //fail scenario 1 - the first two characters are not both digits
+        if(!input.matches("\\d{2}")) {
+            inputIsValid = false;
+        }
+        //fail scenario 2 - the first two characters are both digits, but they aren't in a good range
+        else if (0 < Integer.parseInt(firstTwoChars) && Integer.parseInt(firstTwoChars) <= board.getRows()){
+            inputIsValid = false;
+        }
+        //fail scenario 3 - the first two char are good, but the 3rd char isn't alphabetic
+        else if(!Character.isAlphabetic(thirdChar)) {
+            inputIsValid = false;
+        }
+        //fail scenario 4 - the first two char are good, and the 3rd char is alpha, but it's not in the valid range
+        else if(!('A' <= thirdChar && thirdChar <= ('A' + (board.getRows() - 1 )))) {
+            inputIsValid = false;
+        }
+
+        return inputIsValid;
+    }
+
+    //TODO: these next three methods are a litte extra. Why must flagging require the extra g.
     private String toolVerbPresentTense() {
         String tool = null;
         if (isPlayerClicking()) {

@@ -87,6 +87,6 @@ public class Board {
     }
 
     public void doAction(String coord) {
-
+        System.out.println("I did something");
     }
 }
