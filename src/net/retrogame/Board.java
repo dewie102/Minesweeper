@@ -112,4 +112,5 @@ public class Board {
     public void setGameOver(boolean gameOver) {
         isGameOver = gameOver;
     }
+
 }
