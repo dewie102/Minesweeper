@@ -2,16 +2,23 @@ package net.retrogame;
 
 import java.util.ArrayList;
 
-class Board {
+public class Board {
     private static final int DEFAULT_ROW_COLUMN_SIZE = 9;
     private static final int DEFAULT_NUMBER_OF_BOMBS = 10;
     
-    private int rows = DEFAULT_ROW_COLUMN_SIZE;
-    private int columns = DEFAULT_ROW_COLUMN_SIZE;
-    private int numberOfBombs = DEFAULT_NUMBER_OF_BOMBS;
+    private final int rows;
+    private final int columns;
+    private final int numberOfBombs;
     
-    private final ArrayList<ArrayList<Tile>> tiles = new ArrayList<>();
+    // [Row, Column]
+    private ArrayList<ArrayList<Tile>> tiles;
     private boolean isGameOver = false;
+    
+    public Board() {
+        this.rows = DEFAULT_ROW_COLUMN_SIZE;
+        this.columns = DEFAULT_ROW_COLUMN_SIZE;
+        this.numberOfBombs = DEFAULT_NUMBER_OF_BOMBS;
+    }
     
     public Board(int rows, int columns, int numberOfBombs) {
         this.rows = rows;
@@ -20,11 +27,22 @@ class Board {
     }
     
     public void showBoard() {
-    
+        for(int row = 0; row < getRows(); row++) {
+            tiles.add(new ArrayList<Tile>());
+            for(int column = 0; column < getColumns(); column++) {
+                System.out.printf("[Row:%s, Column:%s]\n%s\n", row, column, tiles.get(row).get(column));
+            }
+        }
     }
     
     public void instantiateBoard() {
-    
+        tiles = new ArrayList<>();
+        for(int row = 0; row < getRows(); row++) {
+            tiles.add(new ArrayList<>());
+            for(int column = 0; column < getColumns(); column++) {
+                tiles.get(row).add(new Tile());
+            }
+        }
     }
     
     private void placeBombsRandomly() {
