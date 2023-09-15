@@ -29,6 +29,7 @@ public class Board {
     
     public void showBoard() {
         // TODO: Make this more dynamic to scale with the rows and columns
+        // TODO: Also, include color border based on something (TileState.COVERED)
         System.out.println("     1     2     3     4     5     6     7     8     9   ");
         System.out.println("  ╔═════╦═════╦═════╦═════╦═════╦═════╦═════╦═════╦═════╗");
         for(int row = 0; row < getRows(); row++) {

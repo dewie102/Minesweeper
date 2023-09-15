@@ -13,9 +13,11 @@ class Tile {
         String tileBackground = ConsoleColor.BLACK_BG.toString();
         String colorSetting = getCurrentState().toString();
         
-        // TODO: Move this under a check for uncovered as we don't want to give away the bombs
-        if(isBomb()) {
-            colorSetting = ConsoleColor.RED_BG.toString() + ConsoleColor.BLACK_FG;
+        if(getCurrentState().equals(TileState.UNCOVERED)) {
+            // TODO: Move this under a check for uncovered as we don't want to give away the bombs
+            if(isBomb()) {
+                colorSetting = ConsoleColor.RED_BG.toString() + ConsoleColor.BLACK_FG;
+            }
         }
         
         // TODO: Remove this temporary variable (tempSpacing) when we actually use bomb variable
