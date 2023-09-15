@@ -4,14 +4,14 @@ import net.retrogame.Board;
 
 class Controller {
     private boolean retry = false;
-    private Board board = new Board(9, 9, 10); //TODO: these are placeholders until I get an empty default
+    private Board board;
     private boolean playerIsClicking = true; //TODO: move this to a Player class if we need one
 
     public void newGame() {
         boolean gameOver = board.isGameOver();
 
         welcome();
-        board.instantiateBoard();
+        createDefaultBoard();
         while (!gameOver) {
             play();
             gameOver = board.isGameOver();
@@ -26,7 +26,7 @@ class Controller {
     }
 
     // TODO: asking user for input
-    private void CreateDefaultBoard() {
+    private void createDefaultBoard() {
         // Will ask user at some point but for now take defaults
         board = new Board(9, 9, 9);
         board.instantiateBoard();
