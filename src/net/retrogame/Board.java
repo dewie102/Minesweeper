@@ -27,12 +27,24 @@ public class Board {
     }
     
     public void showBoard() {
+        String testGray = "\u001B[100m";
+        String testReset = "\u001B[0m";
+    
+        System.out.println("     1     2     3     4     5     6     7     8     9   ");
+        System.out.println("  ╔═════╦═════╦═════╦═════╦═════╦═════╦═════╦═════╦═════╗");
         for(int row = 0; row < getRows(); row++) {
-            tiles.add(new ArrayList<Tile>());
+            System.out.print((char)('A' + row) + " ║"); // Left border
             for(int column = 0; column < getColumns(); column++) {
-                System.out.printf("[Row:%s, Column:%s]\n%s\n", row, column, tiles.get(row).get(column));
+                // Temporary
+                int tileId = tiles.get(row).get(column).getHowManyNeighborsHaveBombs();
+                System.out.printf("%s  %s%s%s║", testGray, tileId, tileId >= 10 ? " " : "  ", testReset);
+            }
+            System.out.print("\n"); // newline
+            if(row != getRows() - 1) {
+                System.out.println("  ╠═════╬═════╬═════╬═════╬═════╬═════╬═════╬═════╬═════╣");
             }
         }
+        System.out.println("  ╚═════╩═════╩═════╩═════╩═════╩═════╩═════╩═════╩═════╝");
     }
     
     public void instantiateBoard() {
@@ -41,6 +53,7 @@ public class Board {
             tiles.add(new ArrayList<>());
             for(int column = 0; column < getColumns(); column++) {
                 tiles.get(row).add(new Tile());
+                tiles.get(row).get(column).setHowManyNeighborsHaveBombs((row*getColumns()) + column);
             }
         }
     }
