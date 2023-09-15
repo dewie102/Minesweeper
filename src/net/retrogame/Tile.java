@@ -10,19 +10,10 @@ class Tile {
     }
     
     public String displayTile() {
-        String colorSetting = "";
-        switch(getCurrentState()){
-            case COVERED:
-                colorSetting = ConsoleColor.UNSET_BG.toString();
-                break;
-            case UNCOVERED:
-                colorSetting = ConsoleColor.GRAY_BG.toString() + ConsoleColor.GREEN_FG;
-                break;
-            case FLAGGED:
-                colorSetting = ConsoleColor.GRAY_BG.toString() + ConsoleColor.YELLOW_FG;
-                break;
-        }
+        String tileBackground = ConsoleColor.BLACK_BG.toString();
+        String colorSetting = getCurrentState().toString();
         
+        // TODO: Move this under a check for uncovered as we don't want to give away the bombs
         if(isBomb()) {
             colorSetting = ConsoleColor.RED_BG.toString() + ConsoleColor.BLACK_FG;
         }
@@ -30,6 +21,9 @@ class Tile {
         // TODO: Remove this temporary variable (tempSpacing) when we actually use bomb variable
         String tempSpacing = (getNumberOfBombsNearby() >= 10 ? " " : "  ");
         
+        /*String display =
+                tileBackground + "  " + colorSetting + getNumberOfBombsNearby() + tileBackground + tempSpacing;*/
+    
         String display = colorSetting + "  " + getNumberOfBombsNearby() + tempSpacing;
         
         display += ConsoleColor.UNSET_BG;
