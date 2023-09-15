@@ -27,12 +27,20 @@ public class Board {
     }
     
     public void showBoard() {
+        System.out.println("╔═════╦═════╦═════╦═════╦═════╦═════╦═════╦═════╦═════╗");
         for(int row = 0; row < getRows(); row++) {
-            tiles.add(new ArrayList<Tile>());
+            System.out.print("║"); // Left border
             for(int column = 0; column < getColumns(); column++) {
-                System.out.printf("[Row:%s, Column:%s]\n%s\n", row, column, tiles.get(row).get(column));
+                // Temporary
+                int tileId = tiles.get(row).get(column).getHowManyNeighborsHaveBombs();
+                System.out.printf("  %s%s║", tileId, tileId >= 10 ? " " : "  ");
+            }
+            System.out.print("\n"); // newline
+            if(row != getRows() - 1) {
+                System.out.println("╠═════╬═════╬═════╬═════╬═════╬═════╬═════╬═════╬═════╣");
             }
         }
+        System.out.println("╚═════╩═════╩═════╩═════╩═════╩═════╩═════╩═════╩═════╝");
     }
     
     public void instantiateBoard() {
@@ -41,6 +49,7 @@ public class Board {
             tiles.add(new ArrayList<>());
             for(int column = 0; column < getColumns(); column++) {
                 tiles.get(row).add(new Tile());
+                tiles.get(row).get(column).setHowManyNeighborsHaveBombs((row*getColumns()) + column);
             }
         }
     }
