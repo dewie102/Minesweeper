@@ -86,7 +86,4 @@ public class Board {
         isGameOver = gameOver;
     }
 
-    public void doAction(String coord) {
-        System.out.println("I did something");
-    }
 }

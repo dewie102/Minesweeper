@@ -66,7 +66,7 @@ class Controller {
             else if (userInput.length()==2 || userInput.length()==3){//TODO: make sure max columns is 99 and max rows is 26
 
                 if (areValidCoords(userInput)) {
-                    board.doAction(userInput);
+                    //board.doAction(userInput);
                     validInput = true;
                 }
                 else {
