@@ -6,6 +6,8 @@ import java.util.List;
 public class Board {
     private static final int DEFAULT_ROW_COLUMN_SIZE = 9;
     private static final int DEFAULT_NUMBER_OF_BOMBS = 10;
+    private static final int BOARD_DISPLAY_SPACE = 5;
+    private static final int BORDER_SPACING_NO_NUMBER = 2;
     
     private final int rows;
     private final int columns;
@@ -28,21 +30,25 @@ public class Board {
     }
     
     public void showBoard() {
-        // TODO: Make this more dynamic to scale with the rows and columns
-        // TODO: Also, include color border based on something (TileState.COVERED)
-        System.out.println("     1     2     3     4     5     6     7     8     9   ");
-        System.out.println("  ╔═════╦═════╦═════╦═════╦═════╦═════╦═════╦═════╦═════╗");
+        // TODO: Include color border based on something (TileState.COVERED)
+        String middle = buildBoardMiddle();
+
+        System.out.println();
+        System.out.println(buildBoardHeader());
+        System.out.println(buildBoardTop());
+
         for(int row = 0; row < getRows(); row++) {
             System.out.print((char)('A' + row) + " ║"); // Left border
             for(int column = 0; column < getColumns(); column++) {
+                // displayTile sets color based on state and sets the appropriate spaces
                 System.out.printf("%s║", getTile(row, column).displayTile());
             }
             System.out.print("\n"); // newline
             if(row != getRows() - 1) {
-                System.out.println("  ╠═════╬═════╬═════╬═════╬═════╬═════╬═════╬═════╬═════╣");
+                System.out.println(middle);
             }
         }
-        System.out.println("  ╚═════╩═════╩═════╩═════╩═════╩═════╩═════╩═════╩═════╝");
+        System.out.println(buildBoardBottom());
     }
     
     public void instantiateBoard() {
@@ -55,15 +61,15 @@ public class Board {
                 //tile.setNumberOfBombsNearby((row*getColumns()) + column);
                 
                 // TODO: Get rid of this as this just uncovers even tiles
-                if((row*getColumns()+column) % 2 == 0)
+                /*if((row*getColumns()+column) % 2 == 0)
                 {
                     tile.setState(TileState.UNCOVERED);
-                }
+                }*/
             }
         }
         
         // TODO: Get rid of these as well, they are just temporary to see how different tile display
-        getTile(getRows() - 1, getColumns() - 1).setState(TileState.FLAGGED);
+        //getTile(getRows() - 1, getColumns() - 1).setState(TileState.FLAGGED);
     
         placeBombsRandomly();
         updateTileNumbers();
@@ -135,12 +141,16 @@ public class Board {
         switch (tile.getCurrentState()) {
             case UNCOVERED:
                 System.out.println("That tile has already been uncovered");
+                break;
             case COVERED:
                 tile.setState(TileState.UNCOVERED);
-                //TODO: if isBomb, endGame()
+                if(tile.isBomb()) {
+                    setGameOver(true);
+                }
+                break;
             case FLAGGED:
                 System.out.println("A flagged tile cannot be clicked");
-
+                break;
         }
     }
 
@@ -148,10 +158,13 @@ public class Board {
         switch (tile.getCurrentState()) {
             case UNCOVERED:
                 System.out.println("An uncovered tile cannot be flagged");
+                break;
             case COVERED:
                 tile.setState(TileState.FLAGGED);
+                break;
             case FLAGGED:
                 tile.setState(TileState.COVERED);
+                break;
         }
     }
 
@@ -163,6 +176,87 @@ public class Board {
 
     private Tile getTile(int row, int column) {
         return tiles.get(row).get(column);
+    }
+
+    private String buildBoardHeader() {
+        //String header = String.format("     1     2     3     4     5     6     7     8     9   ");
+        String intersectionSpace = " ";
+        StringBuilder header = new StringBuilder();
+        // This pushes over everything for the Rows display
+        header.append(" ".repeat(BORDER_SPACING_NO_NUMBER)); // 2
+        header.append(intersectionSpace); // 1
+
+        // Set row to 1 and <= getRows as we want numbers 1-9 not 0-8
+        for(int row = 1; row <= getRows(); row++) {
+            header.append(" ".repeat(BORDER_SPACING_NO_NUMBER)); // 2
+            header.append(row); // number
+            if(row >= 10) {
+                header.append(" ".repeat(BORDER_SPACING_NO_NUMBER - 1)); // 1
+            } else {
+                header.append(" ".repeat(BORDER_SPACING_NO_NUMBER)); // 2
+            }
+            header.append(intersectionSpace); // 1
+        }
+
+        return header.toString();
+    }
+
+    private String buildBoardTop() {
+        //String top = String.format("  ╔═════╦═════╦═════╦═════╦═════╦═════╦═════╦═════╦═════╗");
+
+        StringBuilder top = new StringBuilder();
+        top.append(" ".repeat(BORDER_SPACING_NO_NUMBER));
+        top.append("╔");
+        top.append("═".repeat(BOARD_DISPLAY_SPACE));
+
+        // 1 less then getRows as we already did the first one
+        for(int row = 0; row < getRows() - 1; row++) {
+            top.append("╦");
+            top.append("═".repeat(BOARD_DISPLAY_SPACE));
+        }
+
+        top.append("╗");
+
+        return top.toString();
+    }
+
+    private String buildBoardMiddle() {
+        // String middle = String.format("  ╠═════╬═════╬═════╬═════╬═════╬═════╬═════╬═════╬═════╣");
+
+        StringBuilder middle = new StringBuilder();
+
+        middle.append(" ".repeat(BORDER_SPACING_NO_NUMBER));
+        middle.append("╠");
+        middle.append("═".repeat(BOARD_DISPLAY_SPACE));
+
+        // 1 less then getRows as we already did the first one
+        for(int row = 0; row < getRows() - 1; row++) {
+            middle.append("╬");
+            middle.append("═".repeat(BOARD_DISPLAY_SPACE));
+        }
+
+        middle.append("╣");
+
+        return middle.toString();
+    }
+
+    private String buildBoardBottom() {
+        //String top = String.format("  ╚═════╩═════╩═════╩═════╩═════╩═════╩═════╩═════╩═════╝");
+
+        StringBuilder top = new StringBuilder();
+        top.append(" ".repeat(BORDER_SPACING_NO_NUMBER));
+        top.append("╚");
+        top.append("═".repeat(BOARD_DISPLAY_SPACE));
+
+        // 1 less then getRows as we already did the first one
+        for(int row = 0; row < getRows() - 1; row++) {
+            top.append("╩");
+            top.append("═".repeat(BOARD_DISPLAY_SPACE));
+        }
+
+        top.append("╝");
+
+        return top.toString();
     }
 
     public int getRows() {
