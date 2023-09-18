@@ -1,7 +1,6 @@
 package net.retrogame;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Board {
     private static final int DEFAULT_ROW_COLUMN_SIZE = 9;
@@ -92,6 +91,33 @@ public class Board {
         }
     }
     
+    private void uncoverNeighborsWithZeroBombs(int row, int column) {
+        Queue<TileTuple> tilesToProcess = new LinkedList<>();
+        tilesToProcess.add(new TileTuple(getTile(row, column), row, column));
+        
+        Set<Tile> visited = new HashSet<>();
+        
+        while(!tilesToProcess.isEmpty()) {
+            TileTuple tuple = tilesToProcess.remove();
+            Tile currentTile = tuple.tile;
+            int currentRow = tuple.row;
+            int currentColumn = tuple.column;
+    
+            if(!visited.contains(currentTile) && currentTile.getNumberOfBombsNearby() == 0) {
+                currentTile.setState(TileState.UNCOVERED);
+                visited.add(currentTile);
+    
+                for (Direction currentDirection : Direction.values()) {
+                    int newX = currentRow + currentDirection.x;
+                    int newY = currentColumn + currentDirection.y;
+                    if (inBounds(newX, newY)) {
+                        tilesToProcess.add(new TileTuple(getTile(newX, newY), newX, newY));
+                    }
+                }
+            }
+        }
+    }
+    
     private int randomCoord(int limitExclusive) {
         int number = (int)(Math.random() * limitExclusive);
         return number;
@@ -143,9 +169,14 @@ public class Board {
                 System.out.println("That tile has already been uncovered");
                 break;
             case COVERED:
-                tile.setState(TileState.UNCOVERED);
                 if(tile.isBomb()) {
                     setGameOver(true);
+                }
+                
+                if(tile.getNumberOfBombsNearby() == 0) {
+                    uncoverNeighborsWithZeroBombs(row, col);
+                } else {
+                    tile.setState(TileState.UNCOVERED);
                 }
                 break;
             case FLAGGED:
