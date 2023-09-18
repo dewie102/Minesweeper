@@ -144,7 +144,9 @@ public class Board {
                 break;
             case COVERED:
                 tile.setState(TileState.UNCOVERED);
-                //TODO: if isBomb, endGame()
+                if(tile.isBomb()) {
+                    setGameOver(true);
+                }
                 break;
             case FLAGGED:
                 System.out.println("A flagged tile cannot be clicked");
