@@ -92,9 +92,45 @@ public class Board {
     private void updateTileNumbers() {
     
     }
-    
-    public void doAction(String action) {
-        System.out.println("doAction did something!");
+
+    // row = A-Z
+    // Column = 1-#
+    // isClick = player clicking or flagging
+    public void doAction(int row, int column, boolean isClick) {
+        System.out.printf("doAction did something at %s, %s, %s\n", row, column, isClick);
+
+        Tile chosenTile = tiles.get(row).get(column);
+
+        if(isClick) {
+            doActionClicking(row, column, chosenTile);
+        }
+        else {
+            doActionFlagging(row, column, chosenTile);
+        }
+    }
+
+    private void doActionClicking(int row, int col, Tile tile) {
+        switch (tile.getCurrentState()) {
+            case UNCOVERED:
+                System.out.println("That tile has already been uncovered");
+            case COVERED:
+                tile.setState(TileState.UNCOVERED);
+                //TODO: if isBomb, endGame()
+            case FLAGGED:
+                System.out.println("A flagged tile cannot be clicked");
+
+        }
+    }
+
+    private void doActionFlagging(int row, int col, Tile tile) {
+        switch (tile.getCurrentState()) {
+            case UNCOVERED:
+                System.out.println("An uncovered tile cannot be flagged");
+            case COVERED:
+                tile.setState(TileState.FLAGGED);
+            case FLAGGED:
+                tile.setState(TileState.COVERED);
+        }
     }
     
     public int getRows() {
