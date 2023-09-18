@@ -7,6 +7,7 @@ import java.util.Scanner;
 import com.apps.util.Console;
 import net.retrogame.ConsoleColor;
 import net.retrogame.TileState;
+import net.retrogame.ConsoleColor.*;
 
 //TODO: include some
 
@@ -19,10 +20,10 @@ class Controller {
 
 
     public void newGame() {
-        Console.clear();
         welcome();
-        Console.pause(100);
-        Console.clear();
+        Console.pause(1000);
+        helpScreen();
+        Console.pause(4000);
         createDefaultBoard();
         while (!board.isGameOver()) {
             play();
@@ -30,7 +31,6 @@ class Controller {
         board.showBoard(); // Added a show board to show that you hit a bomb
         promptUserForRetry();
         goodbye(); //TODO: swap these, and only call goodbye if retry is F?
-
 
     }
 
@@ -48,8 +48,31 @@ class Controller {
 
     private void play() {
         Console.clear();
+        System.out.println();
         board.showBoard();
+        System.out.println();
         promptUserForAction();
+    }
+
+    private void helpScreen() {
+
+        System.out.println("HOW TO PLAY:");
+        System.out.println();
+        System.out.println("     In Minesweeper, your goal is to clear all the tiles that are NOT mines.");
+        System.out.println();
+        System.out.println("     When you click on a tile, if it is not a bomb it will show the number of bombs in the surrounding 8 tiles.");
+        System.out.println("     If you click on a bomb the game is over.");
+        System.out.println();
+        System.out.println("     You can also \"flag\" tiles that you believe are bombs."  +
+                " This prevents you from clicking on them, and helps keep track of how many bombs you have already found.");
+
+        System.out.println();
+        System.out.println("Board Key: ");
+        System.out.println("   BLACK tiles are still covered");
+        System.out.println("   \u001B[43m\u001B[30mYELLOW\u001B[0m\u001B[0m tiles have been flagged");
+        System.out.println("   \u001B[41m\u001B[30mRED\u001B[0m\u001B[0m tiles are bombs");
+        System.out.println("   \u001B[42m\u001B[30mGREEN\u001B[0m\u001B[0m tiles have been uncovered and are NOT bombs");
+
     }
 
     //TODO: remove repetition in Strings
@@ -57,15 +80,22 @@ class Controller {
         String userInput = null;
         boolean validInput = false;
         System.out.println("What would you like to do next?");
+        System.out.println();
 
         System.out.println("You are currently "+toolVerbPresentTense()+".");
+        System.out.println();
         userInput = prompter.prompt("Enter the coordinates of the tile you would like to "+ toolVerb() +
                 " in row-column order with no spaces (e.g. B8)," +
-                " or enter [S] to [S]wap over to "+oppositeToolVerbPresentTense()+" mode.").toUpperCase().trim();
+                " or enter [S] to [S]wap over to "+oppositeToolVerbPresentTense()+" mode.\n" +
+                "Enter [H]elp to view the key and game instructions." ).toUpperCase().trim();
 
         while(!validInput) {
             if (userInput.equals("S")){
                 setPlayerIsClicking(!isPlayerClicking());
+                validInput = true;
+            }
+            else if (userInput.equals("H")){
+                helpScreen();
                 validInput = true;
             }
             else if (userInput.length()==2 || userInput.length()==3){//TODO: make sure max columns is 99 and max rows is 26
@@ -79,7 +109,8 @@ class Controller {
                     userInput = prompter.prompt("Please enter a valid input. Valid inputs are " +
                             "the coordinates of the tile you would like to "+ toolVerb() +
                             " in row-column order with no spaces (e.g. B8)," +
-                            " or [S] to [S]wap over to "+toolVerbPresentTense()+" mode.").toUpperCase().trim();
+                            " or [S] to [S]wap over to "+toolVerbPresentTense()+" mode.\n" +
+                            "Enter [H]elp to view the key and game instructions.").toUpperCase().trim();
                 }
             }
             else {
@@ -87,7 +118,8 @@ class Controller {
                 userInput = prompter.prompt("Please enter a valid input. Valid inputs are " +
                         "the coordinates of the tile you would like to "+ toolVerb() +
                         " in row-column order with no spaces (e.g. B8)," +
-                        " or [S] to [S]wap over to "+toolVerbPresentTense()+" mode.").toUpperCase().trim();
+                        " or [S] to [S]wap over to "+toolVerbPresentTense()+" mode.\n" +
+                        "Enter [H]elp to view the key and game instructions.").toUpperCase().trim();
             }
         }
     }
