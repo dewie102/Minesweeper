@@ -35,7 +35,7 @@ public class Board {
         for(int row = 0; row < getRows(); row++) {
             System.out.print((char)('A' + row) + " ║"); // Left border
             for(int column = 0; column < getColumns(); column++) {
-                System.out.printf("%s║", tiles.get(row).get(column).displayTile());
+                System.out.printf("%s║", getTile(row, column).displayTile());
             }
             System.out.print("\n"); // newline
             if(row != getRows() - 1) {
@@ -51,20 +51,22 @@ public class Board {
             tiles.add(new ArrayList<>());
             for(int column = 0; column < getColumns(); column++) {
                 tiles.get(row).add(new Tile());
-                tiles.get(row).get(column).setNumberOfBombsNearby((row*getColumns()) + column);
+                Tile tile = getTile(row, column);
+                //tile.setNumberOfBombsNearby((row*getColumns()) + column);
                 
                 // TODO: Get rid of this as this just uncovers even tiles
                 if((row*getColumns()+column) % 2 == 0)
                 {
-                    tiles.get(row).get(column).setState(TileState.UNCOVERED);
+                    tile.setState(TileState.UNCOVERED);
                 }
             }
         }
         
         // TODO: Get rid of these as well, they are just temporary to see how different tile display
-        tiles.get(getRows() - 1).get(getColumns() - 1).setState(TileState.FLAGGED);
+        getTile(getRows() - 1, getColumns() - 1).setState(TileState.FLAGGED);
     
         placeBombsRandomly();
+        updateTileNumbers();
     }
     
     private void placeBombsRandomly() {
@@ -73,9 +75,9 @@ public class Board {
             int row = randomCoord(getRows());
             int column = randomCoord(getColumns());
             
-            Tile tile = tiles.get(row).get(column);
+            Tile tile = getTile(row, column);
             if(!tile.isBomb()) {
-                tiles.get(row).get(column).setAsBomb(true);
+                tile.setAsBomb(true);
                 bombCount++;
                 System.out.printf("BOMB: Row:%s, Column:%s\n", row, column);
             } else {
@@ -90,47 +92,44 @@ public class Board {
     }
     
     private void updateTileNumbers() {
-    
+        for(int row = 0; row < getRows(); row++) {
+            for(int column = 0; column < getColumns(); column++) {
+                if(!getTile(row, column).isBomb()) {
+                    int bombsNearby = GetBombsFromNeighbors(row, column);
+                    getTile(row, column).setNumberOfBombsNearby(bombsNearby);
+                }
+            }
+        }
+    }
+
+    private int GetBombsFromNeighbors(int row, int column) {
+        int result = 0;
+        for(Direction currentDirection : Direction.values()) {
+            int newX = row + currentDirection.x;
+            int newY = column + currentDirection.y;
+            if(inBounds(newX, newY) && getTile(newX, newY).isBomb()) {
+                result++;
+            }
+        }
+
+        return result;
+    }
+
+    private boolean inBounds(int row, int column) {
+
+        return 0 <= row && row < getRows() &&
+                0 <= column && column < getColumns();
     }
 
     // row = A-Z
     // Column = 1-#
     // isClick = player clicking or flagging
     public void doAction(int row, int column, boolean isClick) {
-        System.out.printf("doAction did something at %s, %s, %s\n", row, column, isClick);
-
-        Tile chosenTile = tiles.get(row).get(column);
-
-        if(isClick) {
-            doActionClicking(row, column, chosenTile);
-        }
-        else {
-            doActionFlagging(row, column, chosenTile);
-        }
+        System.out.println("doAction did something!");
     }
 
-    private void doActionClicking(int row, int col, Tile tile) {
-        switch (tile.getCurrentState()) {
-            case UNCOVERED:
-                System.out.println("That tile has already been uncovered");
-            case COVERED:
-                tile.setState(TileState.UNCOVERED);
-                //TODO: if isBomb, endGame()
-            case FLAGGED:
-                System.out.println("A flagged tile cannot be clicked");
-
-        }
-    }
-
-    private void doActionFlagging(int row, int col, Tile tile) {
-        switch (tile.getCurrentState()) {
-            case UNCOVERED:
-                System.out.println("An uncovered tile cannot be flagged");
-            case COVERED:
-                tile.setState(TileState.FLAGGED);
-            case FLAGGED:
-                tile.setState(TileState.COVERED);
-        }
+    private Tile getTile(int row, int column) {
+        return tiles.get(row).get(column);
     }
     
     public int getRows() {
