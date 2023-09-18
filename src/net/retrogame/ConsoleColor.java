@@ -1,8 +1,7 @@
 package net.retrogame;
 
 public enum ConsoleColor {
-    UNSET_FG("\u001B[0m"),
-    UNSET_BG("\u001B[0m"),
+    RESET_COLOR("\u001B[0m"),
     BLACK_FG("\u001B[30m"),
     BLACK_BG("\u001B[40m"),
     RED_FG("\u001B[31m"),
@@ -13,6 +12,7 @@ public enum ConsoleColor {
     YELLOW_BG("\u001B[43m"),
     GRAY_FG("\u001B[90m"),
     GRAY_BG("\u001B[100m");
+    
     
     
     public String colorString;

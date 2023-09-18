@@ -5,6 +5,8 @@ import net.retrogame.Board;
 
 import java.util.Scanner;
 import com.apps.util.Console;
+import net.retrogame.ConsoleColor;
+import net.retrogame.TileState;
 
 //TODO: include some
 
@@ -168,12 +170,12 @@ class Controller {
     private String toolVerbPresentTense() {
         String tool = null;
         if (isPlayerClicking()) {
-            tool = "clicking";
+            tool = TileState.UNCOVERED + "clicking";
         }
         else {
-            tool = "flagging";
+            tool = TileState.FLAGGED + "flagging";
         }
-        return tool;
+        return tool + ConsoleColor.RESET_COLOR;
     }
 
     private String oppositeToolVerbPresentTense() {
