@@ -1,5 +1,10 @@
 package net.retrogame;
 
+/**
+ * Custom Tuple for the Tiles
+ * This has the tile, row and column in 1 datastructure
+ * to keep track of where things are in the board
+ */
 public class TileTuple {
     
     public final Tile tile;

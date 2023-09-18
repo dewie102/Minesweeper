@@ -91,22 +91,28 @@ public class Board {
         }
     }
     
-    private void uncoverNeighborsWithZeroBombs(int row, int column) {
+    private void processPossibleIslandOfZeros(int row, int column) {
+        // Create a LinkedList (FIFO) of tiles potentially part of the island of zeros
+        // Put the first one in the list to process it
         Queue<TileTuple> tilesToProcess = new LinkedList<>();
         tilesToProcess.add(new TileTuple(getTile(row, column), row, column));
         
+        // HashSet of all the tiles we have already visited so we don't run into a loop
         Set<Tile> visited = new HashSet<>();
         
         while(!tilesToProcess.isEmpty()) {
+            // Remove the top tile with coordinates and separate the pieces
             TileTuple tuple = tilesToProcess.remove();
             Tile currentTile = tuple.tile;
             int currentRow = tuple.row;
             int currentColumn = tuple.column;
     
+            // If we have not visited this tile and we are part of the 0 island proceed
             if(!visited.contains(currentTile) && currentTile.getNumberOfBombsNearby() == 0) {
-                currentTile.setState(TileState.UNCOVERED);
-                visited.add(currentTile);
+                currentTile.setState(TileState.UNCOVERED); // Set tile to uncovered
+                visited.add(currentTile); // Add tile to visited
     
+                // Check all 8 directions and if it is in bounds, add it to the list to be processed
                 for (Direction currentDirection : Direction.values()) {
                     int newX = currentRow + currentDirection.x;
                     int newY = currentColumn + currentDirection.y;
@@ -114,6 +120,9 @@ public class Board {
                         tilesToProcess.add(new TileTuple(getTile(newX, newY), newX, newY));
                     }
                 }
+            } else if(!visited.contains(currentTile)){
+                // else we visited a cell that we haven't visited and the numberOfBombsNearby is not zero, so uncover it
+                currentTile.setState(TileState.UNCOVERED);
             }
         }
     }
@@ -174,7 +183,7 @@ public class Board {
                 }
                 
                 if(tile.getNumberOfBombsNearby() == 0) {
-                    uncoverNeighborsWithZeroBombs(row, col);
+                    processPossibleIslandOfZeros(row, col);
                 } else {
                     tile.setState(TileState.UNCOVERED);
                 }
