@@ -2,7 +2,7 @@ package net.retrogame.client;
 
 import com.apps.util.Prompter;
 import net.retrogame.Board;
-import java.util.Locale;
+
 import java.util.Scanner;
 import com.apps.util.Console;
 
@@ -17,8 +17,10 @@ class Controller {
 
 
     public void newGame() {
-
+        Console.clear();
         welcome();
+        Console.pause(100);
+        Console.clear();
         createDefaultBoard();
         while (!board.isGameOver()) {
             play();
@@ -55,7 +57,7 @@ class Controller {
 
         System.out.println("You are currently "+toolVerbPresentTense()+".");
         userInput = prompter.prompt("Enter the coordinates of the tile you would like to "+ toolVerb() +
-                " in column-row order with no spaces (e.g. 8B)," +
+                " in row-column order with no spaces (e.g. B8)," +
                 " or enter [S] to [S]wap over to "+oppositeToolVerbPresentTense()+" mode.").toUpperCase().trim();
 
         while(!validInput) {
@@ -66,23 +68,39 @@ class Controller {
             else if (userInput.length()==2 || userInput.length()==3){//TODO: make sure max columns is 99 and max rows is 26
 
                 if (areValidCoords(userInput)) {
-                    board.doAction(userInput);
+                    doAction(userInput);
                     validInput = true;
                 }
                 else {
                     userInput = prompter.prompt("Please enter a valid input. Valid inputs are " +
                             "the coordinates of the tile you would like to "+ toolVerb() +
-                            " in column-row order with no spaces (e.g. 8B)," +
+                            " in row-column order with no spaces (e.g. B8)," +
                             " or [S] to [S]wap over to "+toolVerbPresentTense()+" mode.").toUpperCase().trim();
                 }
             }
             else {
                 userInput = prompter.prompt("Please enter a valid input. Valid inputs are " +
                         "the coordinates of the tile you would like to "+ toolVerb() +
-                        " in column-row order with no spaces (e.g. 8B)," +
+                        " in row-column order with no spaces (e.g. B8)," +
                         " or [S] to [S]wap over to "+toolVerbPresentTense()+" mode.").toUpperCase().trim();
             }
         }
+    }
+
+    private void doAction(String input) {
+        int row = 0; //LETTER - first part
+        int col = 0; //NUM - second part
+
+        row = input.charAt(0) - 65; //ASCII to row conversion
+
+        if (input.length() == 2) {
+            col = input.charAt(1) - 49; //ASCII to col conversion
+        }
+        else {
+            col = Integer.parseInt(input.substring(1, 2)) - 1;
+        }
+
+        board.doAction(row, col, isPlayerClicking());
     }
 
     /*
@@ -105,60 +123,48 @@ class Controller {
         return isValid;
     }
 
+    //TODO: remove redundancy - checkFirstChar()?
     private boolean areValidCoordsLength2(String input) {
-
         boolean inputIsValid = true;
-        Character firstChar = input.charAt(0);
-        Character secondChar = input.charAt(1);
+        Character firstChar = input.charAt(0); //should be LETTER
+        Character secondChar = input.charAt(1); //should be NUMBER
 
-        //fail scenario 1 - first character is not a digit
-        if (!Character.isDigit(firstChar)) {
-               inputIsValid = false;
-        }
-           //what the HECK
-        //fail scenario 2 - first character is a digit, but it's not in the range of valid columns
-        else if(!(0 < Character.getNumericValue(firstChar) && Character.getNumericValue(firstChar) <= board.getColumns())){
-               inputIsValid = false;
-        }
-        //fail scenario 3 - first char is good, but second char is not Alpha
-        else if (!Character.isAlphabetic(secondChar)) {
-            inputIsValid = false;
-        }
-        //fail scenario 4 - first char is good, and second char is alpha, but it's not in the valid range
-        else if (!('A' <= secondChar && secondChar <= ('A' + (board.getRows() - 1 )))) {
+             //fail scenario 1 - first character is not a digit
+        if ((!Character.isDigit(secondChar)) ||
+            //fail scenario 2 - first character is a digit, but it's not in the range of valid columns
+            (!(0 < Character.getNumericValue(secondChar) && Character.getNumericValue(secondChar) <= board.getColumns())) ||
+            //fail scenario 3 - first char is good, but second char is not Alpha
+            (!Character.isAlphabetic(firstChar)) ||
+            //fail scenario 4 - first char is good, and second char is alpha, but it's not in the valid range
+            (!('A' <= firstChar && firstChar <= ('A' + (board.getRows() - 1 ))))) {
+
             inputIsValid = false;
         }
 
-        //if you never hit a fail scenario this stayed true
         return inputIsValid;
     }
 
     private boolean areValidCoordsLength3(String input) {
         boolean inputIsValid = true;
-        String firstTwoChars = input.substring(0,1);
-        Character thirdChar = input.charAt(2);
+        String secondTwoChars = input.substring(1,2);
+        Character firstChar = input.charAt(0);
 
-        //fail scenario 1 - the first two characters are not both digits
-        if(!input.matches("\\d{2}")) {
-            inputIsValid = false;
-        }
-        //fail scenario 2 - the first two characters are both digits, but they aren't in a good range
-        else if (0 < Integer.parseInt(firstTwoChars) && Integer.parseInt(firstTwoChars) <= board.getRows()){
-            inputIsValid = false;
-        }
-        //fail scenario 3 - the first two char are good, but the 3rd char isn't alphabetic
-        else if(!Character.isAlphabetic(thirdChar)) {
-            inputIsValid = false;
-        }
-        //fail scenario 4 - the first two char are good, and the 3rd char is alpha, but it's not in the valid range
-        else if(!('A' <= thirdChar && thirdChar <= ('A' + (board.getRows() - 1 )))) {
+           //fail scenario 1 - the second two characters are not both digits
+        if((!secondTwoChars.matches("\\d{2}")) ||
+           //fail scenario 2 - the second two characters are both digits, but they aren't in a good range
+           (0 < Integer.parseInt(secondTwoChars) && Integer.parseInt(secondTwoChars) <= board.getRows()) ||
+           //fail scenario 3 - the second two char are good, but the 1st char isn't alphabetic
+           (!Character.isAlphabetic(firstChar)) ||
+           //fail scenario 4 - the second two char are good, and the 1st char is alpha, but it's not in the valid range
+           (!('A' <= firstChar && firstChar <= ('A' + (board.getRows() - 1 ))))) {
             inputIsValid = false;
         }
 
         return inputIsValid;
     }
 
-    //TODO: these next three methods are a litte extra. Why must flagging require the extra g.
+    //TODO: these next three methods are a little extra. Why must flagging require the extra g.
+    //TODO: ... string builder?
     private String toolVerbPresentTense() {
         String tool = null;
         if (isPlayerClicking()) {
@@ -198,6 +204,8 @@ class Controller {
     }
 
     private void promptUserForRetry() {
+        //TODO: currently this this restarts NewGame, which welcomes the user again. Move thing around, perhaps
+
         String userInput = null;
         boolean validInput = false;
 
