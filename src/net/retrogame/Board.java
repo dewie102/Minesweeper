@@ -180,13 +180,13 @@ public class Board {
             case COVERED:
                 if(tile.isBomb()) {
                     setGameOver(true);
+                } else {
+                    if (tile.getNumberOfBombsNearby() == 0) {
+                        processPossibleIslandOfZeros(row, col);
+                    }
                 }
                 
-                if(tile.getNumberOfBombsNearby() == 0) {
-                    processPossibleIslandOfZeros(row, col);
-                } else {
-                    tile.setState(TileState.UNCOVERED);
-                }
+                tile.setState(TileState.UNCOVERED);
                 break;
             case FLAGGED:
                 System.out.println("A flagged tile cannot be clicked");
