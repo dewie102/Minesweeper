@@ -3,6 +3,9 @@ package net.retrogame.app;
 import com.apps.util.Prompter;
 import net.retrogame.Board;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Scanner;
 import com.apps.util.Console;
 import net.retrogame.ConsoleColor;
@@ -12,15 +15,17 @@ import net.retrogame.TileState;
 
 public class Controller {
     private final static Prompter prompter = new Prompter(new Scanner(System.in));
+    private final static HelpMenu helpMenu = new HelpMenu(prompter);
 
-    private boolean retry = true;
+
     private Board board;
+    private boolean retry = true;
     private boolean playerIsClicking = true;
 
     public void execute() {
         welcome();
-        Console.pause(1000);
-        helpScreen();
+        Console.pause(2000);
+        helpMenu.help();
 
         while(willRetry()) {
             newGame();
@@ -39,54 +44,22 @@ public class Controller {
 
         Console.clear();
         board.showBoard(); // Added a show board to show that you hit a bomb
-        endingMessage();
+        System.out.println();
+        gameOverMessage();
         promptUserForRetry();
     }
 
     private void welcome() {
-        System.out.println("Welcome to MineSweeper!");
-        //TODO: ascii art greeting
-    }
-
-    private void helpScreen() {
-        String userInput = null;
-        boolean validInput = false;
-
-        System.out.println();
-        System.out.println("HOW TO PLAY:");
-        System.out.println();
-        System.out.println("     In Minesweeper, your goal is to clear all the tiles that are NOT mines.");
-        System.out.println();
-        System.out.println("     When you click on a tile, if it is not a bomb it will show the number of bombs in the surrounding 8 tiles.");
-        System.out.println("     If you click on a bomb the game is over.");
-        System.out.println();
-        System.out.println("     You can also \"flag\" tiles that you believe are bombs."  +
-                " This prevents you from clicking on them, and helps keep track of how many bombs you have already found.");
-
-        System.out.println();
-        System.out.println("Board Key: ");
-        System.out.println("\t" + "BLACK tiles are still covered");
-        System.out.println("\t" + ConsoleColor.BLACK_FG + ConsoleColor.YELLOW_BG + "YELLOW" + ConsoleColor.RESET_COLOR + " tiles have been flagged");
-        System.out.println("   \u001B[41m\u001B[30mRED\u001B[0m\u001B[0m tiles are bombs");
-        System.out.println("   \u001B[42m\u001B[30mGREEN\u001B[0m\u001B[0m tiles have been uncovered and are NOT bombs");
-
-        System.out.println();
-
-        System.out.println("Are you ready to continue? This help screen can be viewed at any time by entering H.");
-        while(!validInput) {
-            userInput = prompter.prompt("Type [Y]es to continue. ").toUpperCase().trim();
-
-            if (userInput.equals("Y")) {
-                validInput = true;
-            }
-
+        try {
+            String welcome = Files.readString(Path.of("MinesweeperLogo"));
+            System.out.println(welcome);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
-    // TODO: asking user for input
     private void createDefaultBoard() {
-        // Will ask user at some point but for now take defaults
-        board = new Board(9, 9, 10);
+        board = new Board();
         board.instantiateBoard();
     }
 
@@ -118,7 +91,7 @@ public class Controller {
                 validInput = true;
             }
             else if (userInput.equals("H")){
-                helpScreen();
+                helpMenu.help();
                 validInput = true;
             }
             else if (userInput.length()==2 || userInput.length()==3){//TODO: make sure max columns is 99 and max rows is 26
@@ -270,13 +243,24 @@ public class Controller {
     }
 
     //TODO: might have to move the wasWon flag into Board after all. Sad.
-    private void endingMessage() {
+    private void gameOverMessage() {
+        String message = null;
         System.out.println();
         if (board.wasGameWon()){
-            System.out.println("You cleared out all the mines! Great job!");
+            try {
+                message = Files.readString(Path.of("VictoryFanfare"));
+                System.out.println(message);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         else {
-            System.out.println("BOOOOOOOM!!!! You clicked on a bomb. Bummer.");
+            try {
+                message = Files.readString(Path.of("Oops"));
+                System.out.println(message);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
