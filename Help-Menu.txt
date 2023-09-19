@@ -14,7 +14,7 @@
 		Board Key
 		---------
 	BLACK tiles are still covered
-	YELLOW tiles have been flagged
+	\u001B[43m\u001B[30mYELLOW tiles\u001B[0m\u001B[0m have been flagged
 	RED tiles are bombs
 	GREEN tiles have been uncovered and are NOT bombs
 
