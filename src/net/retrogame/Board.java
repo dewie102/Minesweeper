@@ -172,12 +172,12 @@ public class Board {
     // row = A-Z
     // Column = 1-#
     // isClick = player clicking or flagging
-    public boolean doAction(int row, int column, boolean isClick) {
+    public boolean doAction(int row, int column, boolean isFlag) {
 
         Tile chosenTile = tiles.get(row).get(column);
         boolean done = false;
 
-        if(isClick) {
+        if(!isFlag) {
             done = doActionClicking(row, column, chosenTile);
         }
         else {

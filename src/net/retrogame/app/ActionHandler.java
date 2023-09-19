@@ -3,14 +3,16 @@ package net.retrogame.app;
 import com.apps.util.Prompter;
 import net.retrogame.Board;
 import net.retrogame.ConsoleColor;
+import net.retrogame.Player;
 import net.retrogame.TileState;
 
 public class ActionHandler {
     private final Prompter prompter;
     private final HelpMenu helpMenu;
 
-    private boolean playerIsClicking = true;
+    //private boolean playerIsClicking = true;
     private Board board = null;
+    private Player player = null;
 
     public ActionHandler(Prompter prompter, HelpMenu helpMenu) {
         this.prompter = prompter;
@@ -33,7 +35,7 @@ public class ActionHandler {
 
         while(!validInput) {
             if (userInput.equals("S")){
-                setPlayerIsClicking(!isPlayerClicking());
+                player.swapTool();
                 validInput = true;
             }
             else if (userInput.equals("H")){
@@ -52,7 +54,6 @@ public class ActionHandler {
                     }
                 }
                 else {
-                    // ZR: Should this use the oppositeToolVerbPresentTense()?
                     userInput = prompter.prompt("Please enter a valid input. Valid inputs are " +
                             "the coordinates of the tile you would like to "+ toolVerb() +
                             " in row-column order with no spaces (e.g. B8)," +
@@ -61,7 +62,6 @@ public class ActionHandler {
                 }
             }
             else {
-                // ZR: Should this use the oppositeToolVerbPresentTense()?
                 userInput = prompter.prompt("Please enter a valid input. Valid inputs are " +
                         "the coordinates of the tile you would like to "+ toolVerb() +
                         " in row-column order with no spaces (e.g. B8)," +
@@ -87,7 +87,7 @@ public class ActionHandler {
             col = Integer.parseInt(input.substring(1, 2)) - 1;
         }
 
-        done = board.doAction(row, col, isPlayerClicking());
+        done = board.doAction(row, col, player.isUsingFlagTool());
 
         return done;
     }
@@ -157,7 +157,7 @@ public class ActionHandler {
     //TODO: ... string builder?
     private String toolVerbPresentTense() {
         String tool = null;
-        if (isPlayerClicking()) {
+        if (!player.isUsingFlagTool()) {
             tool = TileState.UNCOVERED + "clicking";
         }
         else {
@@ -168,7 +168,7 @@ public class ActionHandler {
 
     private String oppositeToolVerbPresentTense() {
         String tool = null;
-        if (!isPlayerClicking()) {
+        if (player.isUsingFlagTool()) {
             tool = "clicking";
         }
         else {
@@ -179,7 +179,7 @@ public class ActionHandler {
 
     private String toolVerb() {
         String tool = null;
-        if (isPlayerClicking()) {
+        if (!player.isUsingFlagTool()) {
             tool = "click";
         }
         else {
@@ -188,15 +188,19 @@ public class ActionHandler {
         return tool;
     }
 
-    public boolean isPlayerClicking() {
+    /*public boolean isPlayerClicking() {
         return playerIsClicking;
     }
 
     public void setPlayerIsClicking(boolean playerIsClicking) {
         this.playerIsClicking = playerIsClicking;
-    }
+    }*/
 
     public void setBoard(Board board) {
         this.board = board;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
     }
 }

@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.util.Scanner;
 import com.apps.util.Console;
 import net.retrogame.ConsoleColor;
+import net.retrogame.Player;
 import net.retrogame.TileState;
 
 public class Controller {
@@ -18,6 +19,7 @@ public class Controller {
     private final ActionHandler handler = new ActionHandler(prompter, helpMenu);
 
     private Board board;
+    private Player player;
     private boolean retry = true;
 
     public void execute() {
@@ -34,7 +36,7 @@ public class Controller {
 
     private void welcome() {
         try {
-            String welcome = Files.readString(Path.of("MinesweeperLogo"));
+            String welcome = Files.readString(Path.of("resources/MinesweeperLogo"));
             System.out.println(welcome);
         } catch (IOException e) {
             e.printStackTrace();
@@ -44,7 +46,9 @@ public class Controller {
     public void newGame() {
         Console.clear();
         createDefaultBoard();
+        createUser();
         handler.setBoard(board);
+        handler.setPlayer(player);
 
         while (!board.isGameOver()) {
             play();
@@ -62,6 +66,10 @@ public class Controller {
         board.instantiateBoard();
     }
 
+    private void createUser() {
+        player = new Player("Josh");
+    }
+
     private void play() {
         Console.clear();
         System.out.println();
@@ -75,7 +83,7 @@ public class Controller {
         System.out.println();
         if (board.wasGameWon()){
             try {
-                message = Files.readString(Path.of("VictoryFanfare"));
+                message = Files.readString(Path.of("resources/VictoryFanfare"));
                 System.out.println(message);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -83,7 +91,7 @@ public class Controller {
         }
         else {
             try {
-                message = Files.readString(Path.of("Oops"));
+                message = Files.readString(Path.of("resources/Oops"));
                 System.out.println(message);
             } catch (IOException e) {
                 e.printStackTrace();
