@@ -1,4 +1,4 @@
-package net.retrogame.client;
+package net.retrogame.app;
 
 import com.apps.util.Prompter;
 import net.retrogame.Board;
@@ -10,27 +10,38 @@ import net.retrogame.TileState;
 
 //TODO: include some
 
-class Controller {
+public class Controller {
     private final static Prompter prompter = new Prompter(new Scanner(System.in));
 
     private boolean retry = true;
     private Board board;
-    private boolean playerIsClicking = true; //TODO: move this to a Player class if we need one
+    private boolean playerIsClicking = true;
+    private boolean wasGameWon = false;
 
-
-    public void newGame() {
+    public void execute() {
         welcome();
         Console.pause(1000);
         helpScreen();
-        Console.pause(4000);
+
+        while(willRetry()) {
+            newGame();
+        }
+
+        goodbye();
+    }
+
+    public void newGame() {
+        Console.clear();
         createDefaultBoard();
+
         while (!board.isGameOver()) {
             play();
         }
-        board.showBoard(); // Added a show board to show that you hit a bomb
-        promptUserForRetry();
-        goodbye(); //TODO: swap these, and only call goodbye if retry is F?
 
+        Console.clear();
+        board.showBoard(); // Added a show board to show that you hit a bomb
+        endingMessage();
+        promptUserForRetry();
     }
 
     private void welcome() {
@@ -38,23 +49,11 @@ class Controller {
         //TODO: ascii art greeting
     }
 
-    // TODO: asking user for input
-    private void createDefaultBoard() {
-        // Will ask user at some point but for now take defaults
-        board = new Board(9, 9, 10);
-        board.instantiateBoard();
-    }
-
-    private void play() {
-        Console.clear();
-        System.out.println();
-        board.showBoard();
-        System.out.println();
-        promptUserForAction();
-    }
-
     private void helpScreen() {
+        String userInput = null;
+        boolean validInput = false;
 
+        System.out.println();
         System.out.println("HOW TO PLAY:");
         System.out.println();
         System.out.println("     In Minesweeper, your goal is to clear all the tiles that are NOT mines.");
@@ -72,9 +71,36 @@ class Controller {
         System.out.println("   \u001B[41m\u001B[30mRED\u001B[0m\u001B[0m tiles are bombs");
         System.out.println("   \u001B[42m\u001B[30mGREEN\u001B[0m\u001B[0m tiles have been uncovered and are NOT bombs");
 
+        System.out.println();
+
+        System.out.println("Are you ready to continue? This help screen can be viewed at any time by entering H.");
+        while(!validInput) {
+            userInput = prompter.prompt("Type [Y]es to continue. ").toUpperCase().trim();
+
+            if (userInput.equals("Y")) {
+                validInput = true;
+            }
+
+        }
+    }
+
+    // TODO: asking user for input
+    private void createDefaultBoard() {
+        // Will ask user at some point but for now take defaults
+        board = new Board(9, 9, 10);
+        board.instantiateBoard();
+    }
+
+    private void play() {
+        Console.clear();
+        System.out.println();
+        board.showBoard();
+        System.out.println();
+        promptUserForAction();
     }
 
     //TODO: remove repetition in Strings
+    //TODO: I don't want to move on from this while loop until the action was succesful as well
     private void promptUserForAction() {
         String userInput = null;
         boolean validInput = false;
@@ -240,19 +266,31 @@ class Controller {
         return tool;
     }
 
+    //TODO: might have to move the wasWon flag into Board after all. Sad.
+    private void endingMessage() {
+        System.out.println();
+        if (wasGameWon()){
+            System.out.println("You cleared out all the mines! Great job!");
+        }
+        else {
+            System.out.println("BOOOOOOOM!!!! You clicked on a bomb. Bummer.");
+        }
+    }
+
     private void goodbye() {
+        System.out.println();
         System.out.println("Thank you for playing!");
         //TODO: ascii art sendoff
     }
 
     private void promptUserForRetry() {
-        //TODO: currently this this restarts NewGame, which welcomes the user again. Move thing around, perhaps
 
         String userInput = null;
         boolean validInput = false;
 
-        userInput = prompter.prompt("Would you like to play again? Enter [Y] to start a new game" +
-                "or [N]o to quit.");
+        System.out.println();
+        userInput = prompter.prompt("Would you like to play again? Enter [Y] to start a new game " +
+                "or [N]o to quit. ");
         while(!validInput) {
             if (userInput.toUpperCase().trim().equals("Y")) {
                 setRetry(true);
@@ -261,7 +299,7 @@ class Controller {
                 setRetry(false);
                 validInput = true;
             } else {
-                prompter.prompt("Please enter a valid option: [Y] to start a new game, or [N] to quit.");
+                prompter.prompt("Please enter a valid option: [Y] to start a new game, or [N] to quit. ");
             }
         }
     }
@@ -280,5 +318,13 @@ class Controller {
 
     public void setPlayerIsClicking(boolean playerIsClicking) {
         this.playerIsClicking = playerIsClicking;
+    }
+
+    public boolean wasGameWon() {
+        return wasGameWon;
+    }
+
+    public void setWasGameWon(boolean wasGameWon) {
+        this.wasGameWon = wasGameWon;
     }
 }

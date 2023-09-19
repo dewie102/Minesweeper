@@ -160,7 +160,6 @@ public class Board {
     // Column = 1-#
     // isClick = player clicking or flagging
     public void doAction(int row, int column, boolean isClick) {
-        System.out.printf("doAction did something at %s, %s, %s\n", row, column, isClick);
 
         Tile chosenTile = tiles.get(row).get(column);
 
