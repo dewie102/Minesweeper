@@ -7,6 +7,7 @@ public class Board {
     private static final int DEFAULT_NUMBER_OF_BOMBS = 10;
     private static final int BOARD_DISPLAY_SPACE = 5;
     private static final int BORDER_SPACING_NO_NUMBER = 2;
+    static final ConsoleColor BOARD_BACKGROUND_COLOR = ConsoleColor.GRAY_BG;
     
     private final int rows;
     private final int columns;
@@ -18,19 +19,18 @@ public class Board {
     private boolean gameWon = false;
 
     private int remainingTiles;
+    private int flagCount;
 
     public Board() {
         this.rows = DEFAULT_ROW_COLUMN_SIZE;
         this.columns = DEFAULT_ROW_COLUMN_SIZE;
         this.numberOfBombs = DEFAULT_NUMBER_OF_BOMBS;
-        initializeRemainingTiles();
     }
     
     public Board(int rows, int columns, int numberOfBombs) {
         this.rows = rows;
         this.columns = columns;
         this.numberOfBombs = numberOfBombs;
-        initializeRemainingTiles();
     }
     
     public void showBoard() {
@@ -38,23 +38,24 @@ public class Board {
         String middle = buildBoardMiddle();
 
         System.out.println();
-        System.out.println(ConsoleColor.GRAY_BG + buildBoardHeader() + ConsoleColor.RESET_COLOR);
-        System.out.println(ConsoleColor.GRAY_BG + buildBoardTop() + ConsoleColor.RESET_COLOR);
+        System.out.printf("Flags Placed: %s\n", getFlagCount());
+        System.out.println(BOARD_BACKGROUND_COLOR + buildBoardHeader() + ConsoleColor.RESET_COLOR);
+        System.out.println(BOARD_BACKGROUND_COLOR + buildBoardTop() + ConsoleColor.RESET_COLOR);
 
         for(int row = 0; row < getRows(); row++) {
-            System.out.print(ConsoleColor.GRAY_BG);
+            System.out.print(BOARD_BACKGROUND_COLOR);
             System.out.print((char)('A' + row) + " ║"); // Left border
             for(int column = 0; column < getColumns(); column++) {
                 // displayTile sets color based on state and sets the appropriate spaces
                 System.out.printf("%s║", getTile(row, column).displayTile());
             }
-            System.out.print(ConsoleColor.GRAY_BG);
+            System.out.print(BOARD_BACKGROUND_COLOR);
             System.out.print(" ".repeat(BORDER_SPACING_NO_NUMBER) + ConsoleColor.RESET_COLOR +"\n"); // newline
             if(row != getRows() - 1) {
-                System.out.println(ConsoleColor.GRAY_BG + middle  + ConsoleColor.RESET_COLOR);
+                System.out.println(BOARD_BACKGROUND_COLOR + middle  + ConsoleColor.RESET_COLOR);
             }
         }
-        System.out.println(ConsoleColor.GRAY_BG + buildBoardBottom() + ConsoleColor.RESET_COLOR);
+        System.out.println(BOARD_BACKGROUND_COLOR + buildBoardBottom() + ConsoleColor.RESET_COLOR);
     }
     
     public void instantiateBoard() {
@@ -63,22 +64,13 @@ public class Board {
             tiles.add(new ArrayList<>());
             for(int column = 0; column < getColumns(); column++) {
                 tiles.get(row).add(new Tile());
-                Tile tile = getTile(row, column);
-                //tile.setNumberOfBombsNearby((row*getColumns()) + column);
-                
-                // TODO: Get rid of this as this just uncovers even tiles
-                /*if((row*getColumns()+column) % 2 == 0)
-                {
-                    tile.setState(TileState.UNCOVERED);
-                }*/
             }
         }
-        
-        // TODO: Get rid of these as well, they are just temporary to see how different tile display
-        //getTile(getRows() - 1, getColumns() - 1).setState(TileState.FLAGGED);
-    
+
         placeBombsRandomly();
         updateTileNumbers();
+        initializeRemainingTiles();
+        setFlagCount(getNumberOfBombs());
     }
     
     private void placeBombsRandomly() {
@@ -228,6 +220,7 @@ public class Board {
            case COVERED:
                tile.setState(TileState.FLAGGED);
                done = true;
+               decrementFlagCount();
                break;
            case FLAGGED:
                tile.setState(TileState.COVERED);
@@ -292,6 +285,18 @@ public class Board {
     // package private for testing
     int getRemainingTiles() {
         return remainingTiles;
+    }
+
+    public int getFlagCount() {
+        return flagCount;
+    }
+
+    private void setFlagCount(int flagCount) {
+        this.flagCount = flagCount;
+    }
+
+    private void decrementFlagCount() {
+        setFlagCount(getFlagCount() - 1);
     }
 
     private String buildBoardHeader() {

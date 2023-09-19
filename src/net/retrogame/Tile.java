@@ -34,7 +34,7 @@ class Tile {
                 numberOfBombsDisplayString + // Don't display number if zero
                 "  "; // After number space
         
-        //display += ConsoleColor.RESET_COLOR;
+        display += ConsoleColor.RESET_COLOR.toString() + Board.BOARD_BACKGROUND_COLOR;
         
         return display;
     }
