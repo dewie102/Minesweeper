@@ -7,7 +7,6 @@ import java.util.Scanner;
 import com.apps.util.Console;
 import net.retrogame.ConsoleColor;
 import net.retrogame.TileState;
-import net.retrogame.ConsoleColor.*;
 
 //TODO: include some
 
