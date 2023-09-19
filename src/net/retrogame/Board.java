@@ -16,17 +16,21 @@ public class Board {
     private List<List<Tile>> tiles;
     private boolean isGameOver = false;
     private boolean gameWon = false;
+
+    private int remainingTiles;
     
     public Board() {
         this.rows = DEFAULT_ROW_COLUMN_SIZE;
         this.columns = DEFAULT_ROW_COLUMN_SIZE;
         this.numberOfBombs = DEFAULT_NUMBER_OF_BOMBS;
+        initializeRemainingTiles();
     }
     
     public Board(int rows, int columns, int numberOfBombs) {
         this.rows = rows;
         this.columns = columns;
         this.numberOfBombs = numberOfBombs;
+        initializeRemainingTiles();
     }
     
     public void showBoard() {
@@ -87,14 +91,15 @@ public class Board {
             if(!tile.isBomb()) {
                 tile.setAsBomb(true);
                 bombCount++;
-                System.out.printf("BOMB: Row:%s, Column:%s\n", row, column);
+                System.out.printf("BOMB: Row:%s, Column:%s\n", (char)(row + 'A'), column + 1);
             } else {
                 System.out.println("Invalid placement, bomb present");
             }
         }
     }
     
-    private void processPossibleIslandOfZeros(int row, int column) {
+    private int processPossibleIslandOfZeros(int row, int column) {
+        int numberOfTilesUncovered = 0;
         // Create a LinkedList (FIFO) of tiles potentially part of the island of zeros
         // Put the first one in the list to process it
         Queue<TileTuple> tilesToProcess = new LinkedList<>();
@@ -111,9 +116,10 @@ public class Board {
             int currentColumn = tuple.column;
     
             // If we have not visited this tile and we are part of the 0 island proceed
-            if(!visited.contains(currentTile) && currentTile.getNumberOfBombsNearby() == 0) {
+            if(!visited.contains(currentTile) && currentTile.getNumberOfBombsNearby() == 0 && currentTile.getCurrentState() == TileState.COVERED) {
                 currentTile.setState(TileState.UNCOVERED); // Set tile to uncovered
                 visited.add(currentTile); // Add tile to visited
+                numberOfTilesUncovered++;
     
                 // Check all 8 directions and if it is in bounds, add it to the list to be processed
                 for (Direction currentDirection : Direction.values()) {
@@ -123,11 +129,15 @@ public class Board {
                         tilesToProcess.add(new TileTuple(getTile(newX, newY), newX, newY));
                     }
                 }
-            } else if(!visited.contains(currentTile)){
+            } else if(!visited.contains(currentTile) && currentTile.getCurrentState() == TileState.COVERED){
                 // else we visited a cell that we haven't visited and the numberOfBombsNearby is not zero, so uncover it
                 currentTile.setState(TileState.UNCOVERED);
+                visited.add(currentTile); // Add tile to visited
+                numberOfTilesUncovered++;
             }
         }
+
+        return numberOfTilesUncovered;
     }
     
     private int randomCoord(int limitExclusive) {
@@ -163,7 +173,6 @@ public class Board {
     // Column = 1-#
     // isClick = player clicking or flagging
     public void doAction(int row, int column, boolean isClick) {
-
         Tile chosenTile = tiles.get(row).get(column);
 
         if(isClick) {
@@ -172,6 +181,8 @@ public class Board {
         else {
             doActionFlagging(row, column, chosenTile);
         }
+
+        checkForWinState();
     }
 
     private void doActionClicking(int row, int col, Tile tile) {
@@ -184,7 +195,10 @@ public class Board {
                     setGameOver(true);
                 } else {
                     if (tile.getNumberOfBombsNearby() == 0) {
-                        processPossibleIslandOfZeros(row, col);
+                        int uncovered = processPossibleIslandOfZeros(row, col);
+                        remainingTiles -= uncovered;
+                    } else {
+                        remainingTiles--;
                     }
                 }
                 
@@ -216,8 +230,54 @@ public class Board {
                 0 <= column && column < getColumns();
     }
 
-    private Tile getTile(int row, int column) {
+    // Package private for testing?
+    Tile getTile(int row, int column) {
         return tiles.get(row).get(column);
+    }
+
+    private void initializeRemainingTiles() {
+        this.remainingTiles = (getRows() * getColumns()) - getNumberOfBombs();
+    }
+
+    private void checkForWinState() {
+        if(remainingTiles == 0) {
+            setGameWon(true);
+            setGameOver(true);
+            System.out.println("You WIN!");
+        }
+    }
+
+    public int getRows() {
+        return rows;
+    }
+    
+    public int getColumns() {
+        return columns;
+    }
+    
+    public int getNumberOfBombs() {
+        return numberOfBombs;
+    }
+    
+    public boolean isGameOver() {
+        return isGameOver;
+    }
+    
+    public void setGameOver(boolean gameOver) {
+        isGameOver = gameOver;
+    }
+
+    public boolean wasGameWon() {
+        return gameWon;
+    }
+
+    private void setGameWon(boolean gameWon) {
+        this.gameWon = gameWon;
+    }
+
+    // package private for testing
+    int getRemainingTiles() {
+        return remainingTiles;
     }
 
     private String buildBoardHeader() {
@@ -307,33 +367,5 @@ public class Board {
         bottom.append(" ".repeat(BORDER_SPACING_NO_NUMBER));
 
         return bottom.toString();
-    }
-
-    public int getRows() {
-        return rows;
-    }
-    
-    public int getColumns() {
-        return columns;
-    }
-    
-    public int getNumberOfBombs() {
-        return numberOfBombs;
-    }
-    
-    public boolean isGameOver() {
-        return isGameOver;
-    }
-    
-    public void setGameOver(boolean gameOver) {
-        isGameOver = gameOver;
-    }
-
-    public boolean wasGameWon() {
-        return gameWon;
-    }
-
-    private void setGameWon(boolean gameWon) {
-        this.gameWon = gameWon;
     }
 }
