@@ -34,7 +34,7 @@ public class Controller {
 
     private void welcome() {
         try {
-            String welcome = Files.readString(Path.of("MinesweeperLogo"));
+            String welcome = Files.readString(Path.of("resources/MinesweeperLogo"));
             System.out.println(welcome);
         } catch (IOException e) {
             e.printStackTrace();
@@ -75,7 +75,7 @@ public class Controller {
         System.out.println();
         if (board.wasGameWon()){
             try {
-                message = Files.readString(Path.of("VictoryFanfare"));
+                message = Files.readString(Path.of("resources/VictoryFanfare"));
                 System.out.println(message);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -83,7 +83,7 @@ public class Controller {
         }
         else {
             try {
-                message = Files.readString(Path.of("Oops"));
+                message = Files.readString(Path.of("resources/Oops"));
                 System.out.println(message);
             } catch (IOException e) {
                 e.printStackTrace();

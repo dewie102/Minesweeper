@@ -22,7 +22,7 @@ class HelpMenu {
 
     private void displayMenu() {
         try {
-            String help = Files.readString(Path.of("Help-Menu.txt"));
+            String help = Files.readString(Path.of("resources/Help-Menu.txt"));
             System.out.println(help);
         } catch (IOException e) {
             e.printStackTrace();
