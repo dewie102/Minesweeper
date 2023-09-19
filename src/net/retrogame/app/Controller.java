@@ -66,8 +66,8 @@ public class Controller {
 
         System.out.println();
         System.out.println("Board Key: ");
-        System.out.println("   BLACK tiles are still covered");
-        System.out.println("   \u001B[43m\u001B[30mYELLOW\u001B[0m\u001B[0m tiles have been flagged");
+        System.out.println("\t" + "BLACK tiles are still covered");
+        System.out.println("\t" + ConsoleColor.BLACK_FG + ConsoleColor.YELLOW_BG + "YELLOW" + ConsoleColor.RESET_COLOR + " tiles have been flagged");
         System.out.println("   \u001B[41m\u001B[30mRED\u001B[0m\u001B[0m tiles are bombs");
         System.out.println("   \u001B[42m\u001B[30mGREEN\u001B[0m\u001B[0m tiles have been uncovered and are NOT bombs");
 
