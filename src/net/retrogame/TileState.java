@@ -2,7 +2,7 @@ package net.retrogame;
 
 // Make a smart enum to include all color properties
 public enum TileState {
-    COVERED(ConsoleColor.RESET_COLOR, ConsoleColor.RESET_COLOR),
+    COVERED(ConsoleColor.RESET_COLOR, ConsoleColor.GRAY_BG),
     UNCOVERED(ConsoleColor.BLACK_FG, ConsoleColor.GREEN_BG),
     FLAGGED(ConsoleColor.BLACK_FG, ConsoleColor.YELLOW_BG);
     

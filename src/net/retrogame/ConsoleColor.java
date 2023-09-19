@@ -10,6 +10,8 @@ public enum ConsoleColor {
     GREEN_BG("\u001B[42m"),
     YELLOW_FG("\u001B[33m"),
     YELLOW_BG("\u001B[43m"),
+    WHITE_FG("\u001B[37m"),
+    WHITE_BG("\u001B[47m"),
     GRAY_FG("\u001B[90m"),
     GRAY_BG("\u001B[100m");
     

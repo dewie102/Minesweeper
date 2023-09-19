@@ -15,6 +15,7 @@ public class Board {
     // [Row, Column]
     private List<List<Tile>> tiles;
     private boolean isGameOver = false;
+    private boolean gameWon = false;
     
     public Board() {
         this.rows = DEFAULT_ROW_COLUMN_SIZE;
@@ -33,21 +34,23 @@ public class Board {
         String middle = buildBoardMiddle();
 
         System.out.println();
-        System.out.println(buildBoardHeader());
-        System.out.println(buildBoardTop());
+        System.out.println(ConsoleColor.GRAY_BG + buildBoardHeader() + ConsoleColor.RESET_COLOR);
+        System.out.println(ConsoleColor.GRAY_BG + buildBoardTop() + ConsoleColor.RESET_COLOR);
 
         for(int row = 0; row < getRows(); row++) {
+            System.out.print(ConsoleColor.GRAY_BG);
             System.out.print((char)('A' + row) + " ║"); // Left border
             for(int column = 0; column < getColumns(); column++) {
                 // displayTile sets color based on state and sets the appropriate spaces
                 System.out.printf("%s║", getTile(row, column).displayTile());
             }
-            System.out.print("\n"); // newline
+            System.out.print(ConsoleColor.GRAY_BG);
+            System.out.print(" ".repeat(BORDER_SPACING_NO_NUMBER) + ConsoleColor.RESET_COLOR +"\n"); // newline
             if(row != getRows() - 1) {
-                System.out.println(middle);
+                System.out.println(ConsoleColor.GRAY_BG + middle  + ConsoleColor.RESET_COLOR);
             }
         }
-        System.out.println(buildBoardBottom());
+        System.out.println(ConsoleColor.GRAY_BG + buildBoardBottom() + ConsoleColor.RESET_COLOR);
     }
     
     public void instantiateBoard() {
@@ -237,6 +240,8 @@ public class Board {
             header.append(intersectionSpace); // 1
         }
 
+        header.append(" ".repeat(BORDER_SPACING_NO_NUMBER));
+
         return header.toString();
     }
 
@@ -255,6 +260,8 @@ public class Board {
         }
 
         top.append("╗");
+
+        top.append(" ".repeat(BORDER_SPACING_NO_NUMBER));
 
         return top.toString();
     }
@@ -276,26 +283,30 @@ public class Board {
 
         middle.append("╣");
 
+        middle.append(" ".repeat(BORDER_SPACING_NO_NUMBER));
+
         return middle.toString();
     }
 
     private String buildBoardBottom() {
-        //String top = String.format("  ╚═════╩═════╩═════╩═════╩═════╩═════╩═════╩═════╩═════╝");
+        //String bottom = String.format("  ╚═════╩═════╩═════╩═════╩═════╩═════╩═════╩═════╩═════╝");
 
-        StringBuilder top = new StringBuilder();
-        top.append(" ".repeat(BORDER_SPACING_NO_NUMBER));
-        top.append("╚");
-        top.append("═".repeat(BOARD_DISPLAY_SPACE));
+        StringBuilder bottom = new StringBuilder();
+        bottom.append(" ".repeat(BORDER_SPACING_NO_NUMBER));
+        bottom.append("╚");
+        bottom.append("═".repeat(BOARD_DISPLAY_SPACE));
 
         // 1 less then getRows as we already did the first one
         for(int row = 0; row < getRows() - 1; row++) {
-            top.append("╩");
-            top.append("═".repeat(BOARD_DISPLAY_SPACE));
+            bottom.append("╩");
+            bottom.append("═".repeat(BOARD_DISPLAY_SPACE));
         }
 
-        top.append("╝");
+        bottom.append("╝");
 
-        return top.toString();
+        bottom.append(" ".repeat(BORDER_SPACING_NO_NUMBER));
+
+        return bottom.toString();
     }
 
     public int getRows() {
@@ -318,4 +329,11 @@ public class Board {
         isGameOver = gameOver;
     }
 
+    public boolean wasGameWon() {
+        return gameWon;
+    }
+
+    private void setGameWon(boolean gameWon) {
+        this.gameWon = gameWon;
+    }
 }
