@@ -1,0 +1,27 @@
+		------------
+		How To Play:
+		------------
+
+	In MineSweeper, your goal is to clear all the tiles that are NOT mines.
+
+	When you click on a tile, if it is a bomb it will show the number of bombs in the surrounding 8 tiles.
+	If you click on a bomb, the game is over and you lose.
+
+	You can also "flag" tiles that you believe are bombs. This prevents you from clicking on them, and
+	helps keep track of how many bombs you have already found.
+
+		---------
+		Board Key
+		---------
+	BLACK tiles are still covered
+	\u001B[43m\u001B[30mYELLOW tiles\u001B[0m\u001B[0m have been flagged
+	RED tiles are bombs
+	GREEN tiles have been uncovered and are NOT bombs
+
+		--------------
+		Valid Actions
+		--------------
+	Enter the coordinates of the tiles you would like to click or flag in row-column order, with no spaces (e.g. B8)
+	Enter [S] to [S]wap from clicking mode to flagging mode, or vice versa.
+	Enter [H] to view this [H]elp menu.
+	Enter [X] to E[x]it the application.

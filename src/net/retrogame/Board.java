@@ -18,7 +18,7 @@ public class Board {
     private boolean gameWon = false;
 
     private int remainingTiles;
-    
+
     public Board() {
         this.rows = DEFAULT_ROW_COLUMN_SIZE;
         this.columns = DEFAULT_ROW_COLUMN_SIZE;
@@ -120,7 +120,7 @@ public class Board {
                 currentTile.setState(TileState.UNCOVERED); // Set tile to uncovered
                 visited.add(currentTile); // Add tile to visited
                 numberOfTilesUncovered++;
-    
+
                 // Check all 8 directions and if it is in bounds, add it to the list to be processed
                 for (Direction currentDirection : Direction.values()) {
                     int newX = currentRow + currentDirection.x;
@@ -172,26 +172,31 @@ public class Board {
     // row = A-Z
     // Column = 1-#
     // isClick = player clicking or flagging
-    public void doAction(int row, int column, boolean isClick) {
+    public boolean doAction(int row, int column, boolean isClick) {
+
         Tile chosenTile = tiles.get(row).get(column);
+        boolean done = false;
 
         if(isClick) {
-            doActionClicking(row, column, chosenTile);
+            done = doActionClicking(row, column, chosenTile);
         }
         else {
-            doActionFlagging(row, column, chosenTile);
+            done = doActionFlagging(row, column, chosenTile);
         }
-
         checkForWinState();
+
+        return done;
     }
 
-    private void doActionClicking(int row, int col, Tile tile) {
+    private boolean doActionClicking(int row, int col, Tile tile) {
+        boolean done = false;
         switch (tile.getCurrentState()) {
             case UNCOVERED:
-                System.out.println("That tile has already been uncovered");
+                System.out.println();
+                System.out.println("That tile has already been uncovered. Please enter the coordinates of a different tile.");
                 break;
             case COVERED:
-                if(tile.isBomb()) {
+                if (tile.isBomb()) {
                     setGameOver(true);
                 } else {
                     if (tile.getNumberOfBombsNearby() == 0) {
@@ -201,27 +206,36 @@ public class Board {
                         remainingTiles--;
                     }
                 }
-                
                 tile.setState(TileState.UNCOVERED);
+                done = true;
                 break;
             case FLAGGED:
-                System.out.println("A flagged tile cannot be clicked");
+                System.out.println();
+                System.out.println("A flagged tile cannot be clicked. Please enter the coordinates of a different tile.");
                 break;
         }
+        return done;
     }
 
-    private void doActionFlagging(int row, int col, Tile tile) {
+
+    private boolean doActionFlagging(int row, int col, Tile tile) {
+        boolean done = false;
         switch (tile.getCurrentState()) {
-            case UNCOVERED:
-                System.out.println("An uncovered tile cannot be flagged");
-                break;
-            case COVERED:
-                tile.setState(TileState.FLAGGED);
-                break;
-            case FLAGGED:
-                tile.setState(TileState.COVERED);
-                break;
-        }
+           case UNCOVERED:
+               System.out.println();
+               System.out.println("An uncovered tile cannot be flagged. Please enter the coordinates of a different tile.");
+               break;
+           case COVERED:
+               tile.setState(TileState.FLAGGED);
+               done = true;
+               break;
+           case FLAGGED:
+               tile.setState(TileState.COVERED);
+               done = true;
+               break;
+            }
+
+        return done;
     }
 
     private boolean inBounds(int row, int column) {
@@ -250,19 +264,19 @@ public class Board {
     public int getRows() {
         return rows;
     }
-    
+
     public int getColumns() {
         return columns;
     }
-    
+
     public int getNumberOfBombs() {
         return numberOfBombs;
     }
-    
+
     public boolean isGameOver() {
         return isGameOver;
     }
-    
+
     public void setGameOver(boolean gameOver) {
         isGameOver = gameOver;
     }
