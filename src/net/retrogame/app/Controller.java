@@ -16,7 +16,6 @@ public class Controller {
     private boolean retry = true;
     private Board board;
     private boolean playerIsClicking = true;
-    private boolean wasGameWon = false;
 
     public void execute() {
         welcome();
@@ -100,7 +99,6 @@ public class Controller {
     }
 
     //TODO: remove repetition in Strings
-    //TODO: I don't want to move on from this while loop until the action was succesful as well
     private void promptUserForAction() {
         String userInput = null;
         boolean validInput = false;
@@ -126,15 +124,20 @@ public class Controller {
             else if (userInput.length()==2 || userInput.length()==3){//TODO: make sure max columns is 99 and max rows is 26
 
                 if (areValidCoords(userInput)) {
-                    doAction(userInput);
-                    validInput = true;
+                    boolean actionTaken = doAction(userInput);
+                    if (actionTaken) {
+                        validInput = true;
+                    }
+                    else {
+                        userInput = prompter.prompt("").toUpperCase().trim();
+                    }
                 }
                 else {
                     // ZR: Should this use the oppositeToolVerbPresentTense()?
                     userInput = prompter.prompt("Please enter a valid input. Valid inputs are " +
                             "the coordinates of the tile you would like to "+ toolVerb() +
                             " in row-column order with no spaces (e.g. B8)," +
-                            " or [S] to [S]wap over to "+toolVerbPresentTense()+" mode.\n" +
+                            " or [S] to [S]wap over to "+oppositeToolVerbPresentTense()+" mode.\n" +
                             "Enter [H]elp to view the key and game instructions.").toUpperCase().trim();
                 }
             }
@@ -143,31 +146,31 @@ public class Controller {
                 userInput = prompter.prompt("Please enter a valid input. Valid inputs are " +
                         "the coordinates of the tile you would like to "+ toolVerb() +
                         " in row-column order with no spaces (e.g. B8)," +
-                        " or [S] to [S]wap over to "+toolVerbPresentTense()+" mode.\n" +
+                        " or [S] to [S]wap over to "+oppositeToolVerbPresentTense()+" mode.\n" +
                         "Enter [H]elp to view the key and game instructions.").toUpperCase().trim();
             }
         }
     }
 
-    private void doAction(String input) {
-        int row = 0; //LETTER - first part
-        int col = 0; //NUM - second part
+    private boolean doAction(String input) {
+        int row = 0;
+        int col = 0;
 
-        // ZR
-        // TODO: Don't hardcode the 65 and 49, using the actual ASCII character will help
-        // remember which conversion is which. 65 should be 'A' and 49 should be '1'
+        boolean done = false;
         
-        row = input.charAt(0) - 65; //ASCII to row conversion
+        row = input.charAt(0) - 'A';
 
         if (input.length() == 2) {
             // By subtracting by '1' instead of '0' we don't have the off by one logic to remember!
-            col = input.charAt(1) - 49; //ASCII to col conversion
+            col = input.charAt(1) - '1';
         }
         else {
             col = Integer.parseInt(input.substring(1, 2)) - 1;
         }
 
-        board.doAction(row, col, isPlayerClicking());
+        done = board.doAction(row, col, isPlayerClicking());
+
+        return done;
     }
 
     /*
@@ -269,7 +272,7 @@ public class Controller {
     //TODO: might have to move the wasWon flag into Board after all. Sad.
     private void endingMessage() {
         System.out.println();
-        if (wasGameWon()){
+        if (board.wasGameWon()){
             System.out.println("You cleared out all the mines! Great job!");
         }
         else {
@@ -318,13 +321,5 @@ public class Controller {
 
     public void setPlayerIsClicking(boolean playerIsClicking) {
         this.playerIsClicking = playerIsClicking;
-    }
-
-    public boolean wasGameWon() {
-        return wasGameWon;
-    }
-
-    public void setWasGameWon(boolean wasGameWon) {
-        this.wasGameWon = wasGameWon;
     }
 }

@@ -1,5 +1,8 @@
 package net.retrogame;
 
+import jdk.swing.interop.SwingInterOpUtils;
+
+import javax.swing.plaf.synth.SynthOptionPaneUI;
 import java.util.*;
 
 public class Board {
@@ -162,52 +165,65 @@ public class Board {
     // row = A-Z
     // Column = 1-#
     // isClick = player clicking or flagging
-    public void doAction(int row, int column, boolean isClick) {
+    public boolean doAction(int row, int column, boolean isClick) {
 
         Tile chosenTile = tiles.get(row).get(column);
+        boolean done = false;
 
         if(isClick) {
-            doActionClicking(row, column, chosenTile);
+            done = doActionClicking(row, column, chosenTile);
         }
         else {
-            doActionFlagging(row, column, chosenTile);
+            done = doActionFlagging(row, column, chosenTile);
         }
+
+        return done;
     }
 
-    private void doActionClicking(int row, int col, Tile tile) {
-        switch (tile.getCurrentState()) {
-            case UNCOVERED:
-                System.out.println("That tile has already been uncovered");
-                break;
-            case COVERED:
-                if(tile.isBomb()) {
-                    setGameOver(true);
-                } else {
-                    if (tile.getNumberOfBombsNearby() == 0) {
-                        processPossibleIslandOfZeros(row, col);
+    private boolean doActionClicking(int row, int col, Tile tile) {
+        boolean done = false;
+            switch (tile.getCurrentState()) {
+                case UNCOVERED:
+                    System.out.println();
+                    System.out.println("That tile has already been uncovered. Please enter the coordinates of a different tile.");
+                    break;
+                case COVERED:
+                    if (tile.isBomb()) {
+                        setGameOver(true);
+                    } else {
+                        if (tile.getNumberOfBombsNearby() == 0) {
+                            processPossibleIslandOfZeros(row, col);
+                        }
                     }
-                }
-                
-                tile.setState(TileState.UNCOVERED);
-                break;
-            case FLAGGED:
-                System.out.println("A flagged tile cannot be clicked");
-                break;
-        }
+                    tile.setState(TileState.UNCOVERED);
+                    done = true;
+                    break;
+                case FLAGGED:
+                    System.out.println();
+                    System.out.println("A flagged tile cannot be clicked. Please enter the coordinates of a different tile.");
+                    break;
+            }
+        return done;
     }
 
-    private void doActionFlagging(int row, int col, Tile tile) {
+    private boolean doActionFlagging(int row, int col, Tile tile) {
+        boolean done = false;
         switch (tile.getCurrentState()) {
-            case UNCOVERED:
-                System.out.println("An uncovered tile cannot be flagged");
-                break;
-            case COVERED:
-                tile.setState(TileState.FLAGGED);
-                break;
-            case FLAGGED:
-                tile.setState(TileState.COVERED);
-                break;
-        }
+           case UNCOVERED:
+               System.out.println();
+               System.out.println("An uncovered tile cannot be flagged. Please enter the coordinates of a different tile.");
+               break;
+           case COVERED:
+               tile.setState(TileState.FLAGGED);
+               done = true;
+               break;
+           case FLAGGED:
+               tile.setState(TileState.COVERED);
+               done = true;
+               break;
+            }
+
+        return done;
     }
 
     private boolean inBounds(int row, int column) {
