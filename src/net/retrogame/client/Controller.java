@@ -5,7 +5,8 @@ import net.retrogame.Board;
 
 import java.util.Scanner;
 import com.apps.util.Console;
-import net.retrogame.ConsoleColor.*;
+import net.retrogame.ConsoleColor;
+import net.retrogame.TileState;
 
 //TODO: include some
 
@@ -26,6 +27,7 @@ class Controller {
         while (!board.isGameOver()) {
             play();
         }
+        board.showBoard(); // Added a show board to show that you hit a bomb
         promptUserForRetry();
         goodbye(); //TODO: swap these, and only call goodbye if retry is F?
 
@@ -102,6 +104,7 @@ class Controller {
                     validInput = true;
                 }
                 else {
+                    // ZR: Should this use the oppositeToolVerbPresentTense()?
                     userInput = prompter.prompt("Please enter a valid input. Valid inputs are " +
                             "the coordinates of the tile you would like to "+ toolVerb() +
                             " in row-column order with no spaces (e.g. B8)," +
@@ -110,6 +113,7 @@ class Controller {
                 }
             }
             else {
+                // ZR: Should this use the oppositeToolVerbPresentTense()?
                 userInput = prompter.prompt("Please enter a valid input. Valid inputs are " +
                         "the coordinates of the tile you would like to "+ toolVerb() +
                         " in row-column order with no spaces (e.g. B8)," +
@@ -123,9 +127,14 @@ class Controller {
         int row = 0; //LETTER - first part
         int col = 0; //NUM - second part
 
+        // ZR
+        // TODO: Don't hardcode the 65 and 49, using the actual ASCII character will help
+        // remember which conversion is which. 65 should be 'A' and 49 should be '1'
+        
         row = input.charAt(0) - 65; //ASCII to row conversion
 
         if (input.length() == 2) {
+            // By subtracting by '1' instead of '0' we don't have the off by one logic to remember!
             col = input.charAt(1) - 49; //ASCII to col conversion
         }
         else {
@@ -156,6 +165,7 @@ class Controller {
     }
 
     //TODO: remove redundancy - checkFirstChar()?
+    // ZR TODO: Could use the board.inBound(row, column) to validate the ints are in the boundaries
     private boolean areValidCoordsLength2(String input) {
         boolean inputIsValid = true;
         Character firstChar = input.charAt(0); //should be LETTER
@@ -200,12 +210,12 @@ class Controller {
     private String toolVerbPresentTense() {
         String tool = null;
         if (isPlayerClicking()) {
-            tool = "clicking";
+            tool = TileState.UNCOVERED + "clicking";
         }
         else {
-            tool = "flagging";
+            tool = TileState.FLAGGED + "flagging";
         }
-        return tool;
+        return tool + ConsoleColor.RESET_COLOR;
     }
 
     private String oppositeToolVerbPresentTense() {
