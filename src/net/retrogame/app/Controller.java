@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.util.Scanner;
 import com.apps.util.Console;
 import net.retrogame.ConsoleColor;
+import net.retrogame.Player;
 import net.retrogame.TileState;
 
 public class Controller {
@@ -18,6 +19,7 @@ public class Controller {
     private final ActionHandler handler = new ActionHandler(prompter, helpMenu);
 
     private Board board;
+    private Player player;
     private boolean retry = true;
 
     public void execute() {
@@ -44,7 +46,9 @@ public class Controller {
     public void newGame() {
         Console.clear();
         createDefaultBoard();
+        createUser();
         handler.setBoard(board);
+        handler.setPlayer(player);
 
         while (!board.isGameOver()) {
             play();
@@ -60,6 +64,10 @@ public class Controller {
     private void createDefaultBoard() {
         board = new Board();
         board.instantiateBoard();
+    }
+
+    private void createUser() {
+        player = new Player("Josh");
     }
 
     private void play() {
