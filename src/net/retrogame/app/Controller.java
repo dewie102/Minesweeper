@@ -53,11 +53,17 @@ public class Controller {
             play();
         }
 
-        Console.clear();
-        board.showBoard(); // Added a show board to show that you hit a bomb
-        System.out.println();
-        gameOverMessage();
-        promptUserForRetry();
+
+        //If user entered X to exit directly, all of this will be skipped.
+        if (handler.willRetry()) {
+            Console.clear();
+            board.showBoard(); // Added a show board to show that you hit a bomb
+            System.out.println();
+            gameOverMessage();
+            promptUserForRetry();
+        }
+
+
     }
 
     private void createDefaultBoard() {

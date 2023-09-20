@@ -10,7 +10,6 @@ public class ActionHandler {
     private final Prompter prompter;
     private final HelpMenu helpMenu;
 
-    //private boolean playerIsClicking = true;
     private Board board = null;
     private Player player = null;
     private boolean retry = true;
@@ -26,20 +25,18 @@ public class ActionHandler {
         boolean validInput = false;
         System.out.println("What would you like to do next?");
         System.out.println();
+        System.out.println(
+        "Current tool: " + (player.isUsingFlagTool() ? "flagging" : "clicking") + "\n" +
+        "[S] to swap to " + (player.isUsingFlagTool() ? "clicking" : "flagging") + "\n" +
+        "[H] for help\n" +
+        "[X] to exit the game\n" +
+        "[e.g B8] coordinates to select a tile");
 
-        System.out.println("You are currently "+toolVerbPresentTense()+".");
         System.out.println();
-        userInput = prompter.prompt("Enter the coordinates of the tile you would like to "+ toolVerb() +
-                " in row-column order with no spaces (e.g. B8)," +
-                " or enter [S] to [S]wap over to "+oppositeToolVerbPresentTense()+" mode.\n" +
-                "Enter [H]elp to view the key and game instructions." ).toUpperCase().trim();
+        userInput = prompter.prompt(">").toUpperCase().trim();
 
         while(!validInput) {
-            String invalidInputPrompt = "Please enter a valid input. Valid inputs are " +
-                    "the coordinates of the tile you would like to "+ toolVerb() +
-                    " in row-column order with no spaces (e.g. B8)," +
-                    " or [S] to [S]wap over to "+oppositeToolVerbPresentTense()+" mode.\n" +
-                    "Enter [H]elp to view the key and game instructions.";
+            String invalidInputPrompt = "Please enter a valid input. Enter H if you need help.";
             
             if (userInput.equals("S")){
                 player.swapTool();
@@ -49,12 +46,12 @@ public class ActionHandler {
                 helpMenu.help();
                 validInput = true;
             }
-            //else if (userInput.equals("X")){
-                //setRetry(false);
-                //board.setGameOver(true);
-                //validInput = true;
-            //}
-            else if (userInput.length()==2 || userInput.length()==3){//TODO: make sure max columns is 99 and max rows is 26
+            else if (userInput.equals("X")){
+                setRetry(false);
+                board.setGameOver(true); //breaks us out of while loop in newGame()
+                validInput = true; //breaks us out of this while look
+            }
+            else if (userInput.length()==2 || userInput.length()==3){
 
                 if (areValidCoords(userInput)) {
                     boolean actionTaken = doAction(userInput);
@@ -62,7 +59,7 @@ public class ActionHandler {
                         validInput = true;
                     }
                     else {
-                        userInput = prompter.prompt("").toUpperCase().trim();
+                        userInput = prompter.prompt(">").toUpperCase().trim();
                     }
                 }
                 else {
@@ -136,41 +133,6 @@ public class ActionHandler {
         }
 
         return inputIsValid;
-    }
-
-    //TODO: these next three methods are a little extra. Why must flagging require the extra g.
-    //TODO: ... string builder?
-    private String toolVerbPresentTense() {
-        String tool = null;
-        if (!player.isUsingFlagTool()) {
-            tool = TileState.UNCOVERED + "clicking";
-        }
-        else {
-            tool = TileState.FLAGGED + "flagging";
-        }
-        return tool + ConsoleColor.RESET_COLOR;
-    }
-
-    private String oppositeToolVerbPresentTense() {
-        String tool = null;
-        if (player.isUsingFlagTool()) {
-            tool = "clicking";
-        }
-        else {
-            tool = "flagging";
-        }
-        return tool;
-    }
-
-    private String toolVerb() {
-        String tool = null;
-        if (!player.isUsingFlagTool()) {
-            tool = "click";
-        }
-        else {
-            tool = "flag";
-        }
-        return tool;
     }
 
     public void setBoard(Board board) {
