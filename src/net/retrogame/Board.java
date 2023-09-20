@@ -238,7 +238,7 @@ public class Board {
         return numberOfTilesUncovered;
     }
 
-    private boolean inBounds(int row, int column) {
+    public boolean inBounds(int row, int column) {
 
         return 0 <= row && row < getRows() &&
                 0 <= column && column < getColumns();

@@ -20,14 +20,13 @@ public class Controller {
 
     private Board board;
     private Player player;
-    private boolean retry = true;
 
     public void execute() {
         welcome();
         Console.pause(2000);
         helpMenu.help();
 
-        while(willRetry()) {
+        while(handler.willRetry()) {
             newGame();
         }
 
@@ -111,10 +110,10 @@ public class Controller {
                 "or [N]o to quit. ");
         while(!validInput) {
             if (userInput.toUpperCase().trim().equals("Y")) {
-                setRetry(true);
+                handler.setRetry(true);
                 validInput = true;
             } else if (userInput.toUpperCase().trim().equals("N")) {
-                setRetry(false);
+                handler.setRetry(false);
                 validInput = true;
             } else {
                 prompter.prompt("Please enter a valid option: [Y] to start a new game, or [N] to quit. ");
@@ -126,14 +125,6 @@ public class Controller {
         System.out.println();
         System.out.println("Thank you for playing!");
         //TODO: ascii art sendoff
-    }
-
-    public boolean willRetry() {
-        return retry;
-    }
-
-    private void setRetry(boolean retry) {
-        this.retry = retry;
     }
 
 }

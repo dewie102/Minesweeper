@@ -10,14 +10,6 @@
 	You can also "flag" tiles that you believe are bombs. This prevents you from clicking on them, and
 	helps keep track of how many bombs you have already found.
 
-		---------
-		Board Key
-		---------
-	BLACK tiles are still covered
-	\u001B[43m\u001B[30mYELLOW tiles\u001B[0m\u001B[0m have been flagged
-	RED tiles are bombs
-	GREEN tiles have been uncovered and are NOT bombs
-
 		--------------
 		Valid Actions
 		--------------
