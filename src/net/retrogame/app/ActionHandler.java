@@ -13,6 +13,7 @@ public class ActionHandler {
     //private boolean playerIsClicking = true;
     private Board board = null;
     private Player player = null;
+    private boolean retry = true;
 
     public ActionHandler(Prompter prompter, HelpMenu helpMenu) {
         this.prompter = prompter;
@@ -48,6 +49,11 @@ public class ActionHandler {
                 helpMenu.help();
                 validInput = true;
             }
+            //else if (userInput.equals("X")){
+                //setRetry(false);
+                //board.setGameOver(true);
+                //validInput = true;
+            //}
             else if (userInput.length()==2 || userInput.length()==3){//TODO: make sure max columns is 99 and max rows is 26
 
                 if (areValidCoords(userInput)) {
@@ -85,11 +91,6 @@ public class ActionHandler {
         return done;
     }
 
-    /*
-     * Valid coordinates are anything that is within the row/column set.
-     * If the coord points to a Tile that has already been clicked that will be handed
-     * by doAction
-     */
     private boolean areValidCoords(String input) {
 
         boolean isValid = false;
@@ -105,21 +106,16 @@ public class ActionHandler {
         return isValid;
     }
 
-    //TODO: remove redundancy - checkFirstChar()?
     // ZR TODO: Could use the board.inBound(row, column) to validate the ints are in the boundaries
     private boolean areValidCoordsLength2(String input) {
         boolean inputIsValid = true;
-        Character firstChar = input.charAt(0); //should be LETTER
-        Character secondChar = input.charAt(1); //should be NUMBER
+        Character firstChar = input.charAt(0); //should be LETTER - rows
+        Character secondChar = input.charAt(1); //should be NUMBER - cols
 
-        //fail scenario 1 - first character is not a digit
         if ((!Character.isDigit(secondChar)) ||
-                //fail scenario 2 - first character is a digit, but it's not in the range of valid columns
-                (!(0 < Character.getNumericValue(secondChar) && Character.getNumericValue(secondChar) <= board.getColumns())) ||
-                //fail scenario 3 - first char is good, but second char is not Alpha
-                (!Character.isAlphabetic(firstChar)) ||
-                //fail scenario 4 - first char is good, and second char is alpha, but it's not in the valid range
-                (!('A' <= firstChar && firstChar <= ('A' + (board.getRows() - 1 ))))) {
+            (!Character.isAlphabetic(firstChar)) ||
+            (!board.inBounds((firstChar - 'A'),((int) secondChar - '1') ) )
+           ){
 
             inputIsValid = false;
         }
@@ -132,14 +128,10 @@ public class ActionHandler {
         String secondTwoChars = input.substring(1,2);
         Character firstChar = input.charAt(0);
 
-        //fail scenario 1 - the second two characters are not both digits
         if((!secondTwoChars.matches("\\d{2}")) ||
-                //fail scenario 2 - the second two characters are both digits, but they aren't in a good range
-                (0 < Integer.parseInt(secondTwoChars) && Integer.parseInt(secondTwoChars) <= board.getRows()) ||
-                //fail scenario 3 - the second two char are good, but the 1st char isn't alphabetic
-                (!Character.isAlphabetic(firstChar)) ||
-                //fail scenario 4 - the second two char are good, and the 1st char is alpha, but it's not in the valid range
-                (!('A' <= firstChar && firstChar <= ('A' + (board.getRows() - 1 ))))) {
+           (!Character.isAlphabetic(firstChar)) ||
+           (!board.inBounds(firstChar - 'A', Integer.parseInt(secondTwoChars) - '1') )
+          ){
             inputIsValid = false;
         }
 
@@ -187,5 +179,13 @@ public class ActionHandler {
 
     public void setPlayer(Player player) {
         this.player = player;
+    }
+
+    public boolean willRetry() {
+        return retry;
+    }
+
+    public void setRetry(boolean retry) {
+        this.retry = retry;
     }
 }

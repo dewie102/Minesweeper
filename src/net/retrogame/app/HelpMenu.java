@@ -1,9 +1,12 @@
 package net.retrogame.app;
 import com.apps.util.Console;
 import com.apps.util.Prompter;
+import static net.retrogame.ConsoleColor.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.Locale;
 
 
 class HelpMenu {
@@ -17,16 +20,32 @@ class HelpMenu {
         Console.clear();
         displayMenu();
         System.out.println();
+        displayBoardKey();
+        System.out.println();
         exitMenu();
     }
 
+    //TODO: only read the file once
     private void displayMenu() {
         try {
             String help = Files.readString(Path.of("resources/Help-Menu.txt"));
             System.out.println(help);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void displayBoardKey(){
+
+        System.out.println(
+                "\t\t---------\n" +
+                "\t\tBoard Key\n" +
+                "\t\t---------\n" +
+                "\t\tBLACK tiles are still covered\n" +
+	            "\t\t" + YELLOW_BG + BLACK_FG +"YELLOW" + RESET_COLOR + " tiles have been flagged\n" +
+                "\t\t" + RED_BG + BLACK_FG + "RED" + RESET_COLOR + " tiles are bombs\n" +
+                "\t\t" + GREEN_BG + BLACK_FG + "GREEN" + RESET_COLOR + " tiles have been uncovered and are NOT bombs\n");
     }
 
     private void exitMenu() {

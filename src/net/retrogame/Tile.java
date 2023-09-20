@@ -10,12 +10,10 @@ class Tile {
     }
     
     public String displayTile() {
-        String tileBackground = ConsoleColor.BLACK_BG.toString();
         String colorSetting = getCurrentState().toString();
         String numberOfBombsDisplayString = " ";
         
         if(getCurrentState().equals(TileState.UNCOVERED)) {
-            // TODO: Move this under a check for uncovered as we don't want to give away the bombs
             if(isBomb()) {
                 colorSetting = ConsoleColor.RED_BG.toString() + ConsoleColor.BLACK_FG;
             }
@@ -24,17 +22,13 @@ class Tile {
                 numberOfBombsDisplayString = String.format("%s", getNumberOfBombsNearby());
             }
         }
-        
-        // TODO: Remove this temporary variable (tempSpacing) when we actually use bomb variable
-        //String tempSpacing = (getNumberOfBombsNearby() >= 10 ? " " : "  ");
-        //String display = colorSetting + "  " + getNumberOfBombsNearby() + tempSpacing;
 
         String display = colorSetting +
                 "  " + // Before number space
                 numberOfBombsDisplayString + // Don't display number if zero
                 "  "; // After number space
         
-        //display += ConsoleColor.RESET_COLOR;
+        display += ConsoleColor.RESET_COLOR.toString() + ConsoleDisplayUtil.BOARD_BACKGROUND_COLOR;
         
         return display;
     }
