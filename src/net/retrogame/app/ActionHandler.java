@@ -12,6 +12,7 @@ import static net.retrogame.ConsoleDisplayUtil.createStringWithColorAndReset;
 public class ActionHandler {
     private final Prompter prompter;
     private final HelpMenu helpMenu;
+    private final PlayerStatsDisplay statsDisplay;
 
     private Board board = null;
     private Player player = null;
@@ -20,6 +21,7 @@ public class ActionHandler {
     public ActionHandler(Prompter prompter, HelpMenu helpMenu) {
         this.prompter = prompter;
         this.helpMenu = helpMenu;
+        statsDisplay = new PlayerStatsDisplay(prompter);
     }
 
     public void promptUserForAction() {
@@ -33,13 +35,14 @@ public class ActionHandler {
         "[S] to swap to " + (player.getCurrentTool() == Tool.FLAG ? createStringWithColorAndReset("clicking", GREEN_BG) : createStringWithColorAndReset("flagging", YELLOW_BG)) + "\n" +
         "[H] for help\n" +
         "[X] to exit the game\n" +
+        "[P] to view your Player stats\n" +
         "[e.g B8] coordinates to select a tile");
 
         System.out.println();
-        userInput = prompter.prompt(">").toUpperCase().trim();
+        userInput = prompter.prompt("> ").toUpperCase().trim();
 
         while(!validInput) {
-            String invalidInputPrompt = "Please enter a valid input. Enter H if you need help.\n>c";
+            String invalidInputPrompt = "Please enter a valid input. Enter H if you need help.\n> ";
             
             // If we add more tools we will need to fix this first if statement
             if (userInput.equals("S")){
@@ -55,13 +58,17 @@ public class ActionHandler {
                 board.setGameOver(true);
                 validInput = true;
             }
+            else if (userInput.equals("P")) {
+                statsDisplay.show(player);
+                validInput = true;
+            }
             else if (areValidCoordinates(userInput)) {
                 boolean actionTaken = doAction(userInput);
                 if (actionTaken) {
                     validInput = true;
                 }
                 else {
-                    userInput = prompter.prompt(">").toUpperCase().trim();
+                    userInput = prompter.prompt("> ").toUpperCase().trim();
                 }
             }
             else {
@@ -74,16 +81,16 @@ public class ActionHandler {
         int row = 0;
         int col = 0;
 
-        boolean done = false;
+        boolean actionWasTaken = false;
 
         row = input.charAt(0) - 'A';
     
         // Substring starts at index 1 till the end of the string
         col = Integer.parseInt(input.substring(1)) - 1;
 
-        done = board.doAction(row, col, player.getCurrentTool());
+        actionWasTaken = board.doAction(row, col, player.getCurrentTool());
 
-        return done;
+        return actionWasTaken;
     }
 
     private boolean areValidCoordinates(String input) {
@@ -111,6 +118,10 @@ public class ActionHandler {
 
     public void setPlayer(Player player) {
         this.player = player;
+    }
+
+    private Player getPlayer() {
+        return player;
     }
 
     public boolean willRetry() {

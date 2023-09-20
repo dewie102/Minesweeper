@@ -82,7 +82,9 @@ public class Player {
         }
     }
 
-    private long getBestTime() {
+    public long getBestTime() {
         return bestTime;
     }
+
+
 }
