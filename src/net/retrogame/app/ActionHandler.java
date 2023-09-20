@@ -48,8 +48,8 @@ public class ActionHandler {
             }
             else if (userInput.equals("X")){
                 setRetry(false);
-                board.setGameOver(true); //breaks us out of while loop in newGame()
-                validInput = true; //breaks us out of this while look
+                board.setGameOver(true);
+                validInput = true;
             }
             else if (userInput.length()==2 || userInput.length()==3){
 

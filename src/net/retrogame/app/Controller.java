@@ -48,6 +48,7 @@ public class Controller {
         createUser();
         handler.setBoard(board);
         handler.setPlayer(player);
+        player.setTotalGamesPlayed(player.getTotalGamesPlayed()+1);
 
         while (!board.isGameOver()) {
             play();
@@ -87,12 +88,15 @@ public class Controller {
         String message = null;
         System.out.println();
         if (board.wasGameWon()){
+            player.setTotalWins(player.getTotalWins() + 1);
+            player.updateBestTime(board.getPlayTime());
             try {
                 message = Files.readString(Path.of("resources/VictoryFanfare"));
                 System.out.println(message);
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
         }
         else {
             try {
@@ -111,6 +115,7 @@ public class Controller {
         String userInput = null;
         boolean validInput = false;
 
+        System.out.println(player.toString());
         System.out.println();
         userInput = prompter.prompt("Would you like to play again? Enter [Y] to start a new game " +
                 "or [N]o to quit. ");

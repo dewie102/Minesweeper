@@ -257,6 +257,7 @@ public class Board {
         if(remainingTiles == 0) {
             setGameWon(true);
             setGameOver(true);
+
             playTimer.stopStopWatch();
             System.out.println("You WIN!");
         }
