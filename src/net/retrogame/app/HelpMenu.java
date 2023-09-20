@@ -41,7 +41,7 @@ class HelpMenu {
                 "\t\t---------\n" +
                 "\t\tBoard Key\n" +
                 "\t\t---------\n" +
-                "\t\tBLACK tiles are still covered\n" +
+                "\t\tBLACK tiles are still covered\n" + //TODO: Gray
 	            "\t\t" + createStringWithColorAndReset("YELLOW", YELLOW_BG) + " tiles have been flagged\n" +
                 "\t\t" + createStringWithColorAndReset("RED", RED_BG) + " tiles are bombs\n" +
                 "\t\t" + createStringWithColorAndReset("GREEN", GREEN_BG) + " tiles have been uncovered and are NOT bombs\n");
@@ -52,7 +52,7 @@ class HelpMenu {
         boolean validInput = false;
 
         while(!validInput) {
-            userInput = prompter.prompt("Type [C] to [C]ontinue. ").toUpperCase().trim();
+            userInput = prompter.prompt("Type [C] to [C]ontinue.\n> ").toUpperCase().trim();
 
             if (userInput.equals("C")) {
                 validInput = true;

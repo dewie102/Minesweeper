@@ -35,15 +35,15 @@ public class Controller {
     }
 
     private void welcome() {
-        try {
-            String welcome = Files.readString(Path.of("resources/MinesweeperLogo"));
-            System.out.println(welcome);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        System.out.println(fileLoader.getWelcomeString());
+
+        //pause
+        //Enter your name to continue:
+        //createUser uses that name
 
         createUser("Josh");
         handler.setPlayer(player);
+
     }
 
     public void newGame() {
@@ -90,21 +90,10 @@ public class Controller {
         if (board.wasGameWon()){
             player.setTotalWins(player.getTotalWins() + 1);
             player.updateBestTime(board.getPlayTime());
-            try {
-                message = Files.readString(Path.of("resources/VictoryFanfare"));
-                System.out.println(message);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
+            System.out.println(fileLoader.getWinString());
         }
         else {
-            try {
-                message = Files.readString(Path.of("resources/Oops"));
-                System.out.println(message);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            System.out.println(fileLoader.getLoseString());
         }
     
         System.out.println("Total time played: " + board.getPlayTime());
@@ -116,8 +105,9 @@ public class Controller {
         boolean validInput = false;
 
         System.out.println();
-        userInput = prompter.prompt("Would you like to play again? Enter [Y] to start a new game " +
-                "or [N]o to quit. ");
+        System.out.println("Would you like to play again? Enter [Y]es to start a new game " +
+                "or [N]o to quit.");
+        userInput = prompter.prompt("> ");
         while(!validInput) {
             if (userInput.toUpperCase().trim().equals("Y")) {
                 handler.setRetry(true);
@@ -126,7 +116,7 @@ public class Controller {
                 handler.setRetry(false);
                 validInput = true;
             } else {
-                prompter.prompt("Please enter a valid option: [Y] to start a new game, or [N] to quit. ");
+                prompter.prompt("Please enter a valid option: [Y] to start a new game, or [N] to quit.\n> ");
             }
         }
     }
