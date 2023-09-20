@@ -12,11 +12,13 @@ public class Board {
     private final int rows;
     private final int columns;
     private final int numberOfBombs;
+    private final Timer playTimer = new Timer();
     
     // [Row, Column]
     private List<List<Tile>> tiles;
     private boolean isGameOver = false;
     private boolean gameWon = false;
+    private boolean madeFirstClick = false;
 
     private int remainingTiles;
     private int flagCount;
@@ -34,11 +36,11 @@ public class Board {
     }
     
     public void showBoard() {
-        // TODO: Include color border based on something (TileState.COVERED)
         String middle = buildBoardMiddle();
 
         System.out.println();
-        System.out.printf("Flags Placed: %s\n", getFlagCount());
+        System.out.printf("Flags: %s\n", getFlagCount());
+        System.out.printf("Timer: %s\n", playTimer.getElapsedTimeSinceStartInSeconds());
         System.out.println(BOARD_BACKGROUND_COLOR + buildBoardHeader() + ConsoleColor.RESET_COLOR);
         System.out.println(BOARD_BACKGROUND_COLOR + buildBoardTop() + ConsoleColor.RESET_COLOR);
 
@@ -188,8 +190,14 @@ public class Board {
                 System.out.println("That tile has already been uncovered. Please enter the coordinates of a different tile.");
                 break;
             case COVERED:
+                if(!madeFirstClick) {
+                    playTimer.startStopWatch();
+                    madeFirstClick = true;
+                }
+                
                 if (tile.isBomb()) {
                     setGameOver(true);
+                    playTimer.stopStopWatch();
                 } else {
                     if (tile.getNumberOfBombsNearby() == 0) {
                         int uncovered = processPossibleIslandOfZeros(row, col);
@@ -250,8 +258,13 @@ public class Board {
         if(remainingTiles == 0) {
             setGameWon(true);
             setGameOver(true);
+            playTimer.stopStopWatch();
             System.out.println("You WIN!");
         }
+    }
+    
+    public long getPlayTime() {
+        return playTimer.getRecordedTimeInSeconds();
     }
 
     public int getRows() {
