@@ -15,7 +15,8 @@ import net.retrogame.TileState;
 public class Controller {
 
     private final static Prompter prompter = new Prompter(new Scanner(System.in));
-    private final static HelpMenu helpMenu = new HelpMenu(prompter);
+    private final static FileLoader fileLoader = new FileLoader();
+    private final static HelpMenu helpMenu = new HelpMenu(prompter, fileLoader);
     private final ActionHandler handler = new ActionHandler(prompter, helpMenu);
 
     private Board board;
@@ -40,19 +41,19 @@ public class Controller {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        createUser("Josh");
+        handler.setPlayer(player);
     }
 
     public void newGame() {
         Console.clear();
         createDefaultBoard();
-        createUser();
         handler.setBoard(board);
-        handler.setPlayer(player);
-
+        player.setTotalGamesPlayed(player.getTotalGamesPlayed()+1);
         while (!board.isGameOver()) {
             play();
         }
-
 
         //If user entered X to exit directly, all of this will be skipped.
         if (handler.willRetry()) {
@@ -71,8 +72,8 @@ public class Controller {
         board.instantiateBoard();
     }
 
-    private void createUser() {
-        player = new Player("Josh");
+    private void createUser(String name) {
+        player = new Player(name);
     }
 
     private void play() {
@@ -87,12 +88,15 @@ public class Controller {
         String message = null;
         System.out.println();
         if (board.wasGameWon()){
+            player.setTotalWins(player.getTotalWins() + 1);
+            player.updateBestTime(board.getPlayTime());
             try {
                 message = Files.readString(Path.of("resources/VictoryFanfare"));
                 System.out.println(message);
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
         }
         else {
             try {

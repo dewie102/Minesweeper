@@ -5,6 +5,10 @@ import net.retrogame.Board;
 import net.retrogame.Player;
 import net.retrogame.Tool;
 
+import static net.retrogame.ConsoleColor.GREEN_BG;
+import static net.retrogame.ConsoleColor.YELLOW_BG;
+import static net.retrogame.ConsoleDisplayUtil.createStringWithColorAndReset;
+
 public class ActionHandler {
     private final Prompter prompter;
     private final HelpMenu helpMenu;
@@ -25,8 +29,8 @@ public class ActionHandler {
         System.out.println("What would you like to do next?");
         System.out.println();
         System.out.println(
-        "Current tool: " + (player.getCurrentTool() == Tool.FLAG ? "flagging" : "clicking") + "\n" +
-        "[S] to swap to " + (player.getCurrentTool() == Tool.FLAG ? "clicking" : "flagging") + "\n" +
+        "Current tool: " + (player.getCurrentTool() == Tool.FLAG ? createStringWithColorAndReset("flagging", YELLOW_BG) : createStringWithColorAndReset("clicking", GREEN_BG)) + "\n" +
+        "[S] to swap to " + (player.getCurrentTool() == Tool.FLAG ? createStringWithColorAndReset("clicking", GREEN_BG) : createStringWithColorAndReset("flagging", YELLOW_BG)) + "\n" +
         "[H] for help\n" +
         "[X] to exit the game\n" +
         "[e.g B8] coordinates to select a tile");
@@ -48,8 +52,8 @@ public class ActionHandler {
             }
             else if (userInput.equals("X")){
                 setRetry(false);
-                board.setGameOver(true); //breaks us out of while loop in newGame()
-                validInput = true; //breaks us out of this while look
+                board.setGameOver(true);
+                validInput = true;
             }
             else if (areValidCoordinates(userInput)) {
                 boolean actionTaken = doAction(userInput);
