@@ -3,6 +3,7 @@ package net.retrogame.app;
 import com.apps.util.Prompter;
 import net.retrogame.Board;
 import net.retrogame.Player;
+import net.retrogame.Tool;
 
 public class ActionHandler {
     private final Prompter prompter;
@@ -24,8 +25,8 @@ public class ActionHandler {
         System.out.println("What would you like to do next?");
         System.out.println();
         System.out.println(
-        "Current tool: " + (player.isUsingFlagTool() ? "flagging" : "clicking") + "\n" +
-        "[S] to swap to " + (player.isUsingFlagTool() ? "clicking" : "flagging") + "\n" +
+        "Current tool: " + (player.getCurrentTool() == Tool.FLAG ? "flagging" : "clicking") + "\n" +
+        "[S] to swap to " + (player.getCurrentTool() == Tool.FLAG ? "clicking" : "flagging") + "\n" +
         "[H] for help\n" +
         "[X] to exit the game\n" +
         "[e.g B8] coordinates to select a tile");
@@ -36,6 +37,7 @@ public class ActionHandler {
         while(!validInput) {
             String invalidInputPrompt = "Please enter a valid input. Enter H if you need help.\n>c";
             
+            // If we add more tools we will need to fix this first if statement
             if (userInput.equals("S")){
                 player.swapTool();
                 validInput = true;
@@ -75,7 +77,7 @@ public class ActionHandler {
         // Substring starts at index 1 till the end of the string
         col = Integer.parseInt(input.substring(1)) - 1;
 
-        done = board.doAction(row, col, player.isUsingFlagTool());
+        done = board.doAction(row, col, player.getCurrentTool());
 
         return done;
     }

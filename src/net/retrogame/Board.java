@@ -79,8 +79,8 @@ public class Board {
     private void placeBombsRandomly() {
         int bombCount = 0;
         while(bombCount < getNumberOfBombs()) {
-            int row = randomCoord(getRows());
-            int column = randomCoord(getColumns());
+            int row = randomCoordinate(getRows());
+            int column = randomCoordinate(getColumns());
             
             Tile tile = getTile(row, column);
             if(!tile.isBomb()) {
@@ -93,9 +93,8 @@ public class Board {
         }
     }
     
-    private int randomCoord(int limitExclusive) {
-        int number = (int)(Math.random() * limitExclusive);
-        return number;
+    private int randomCoordinate(int limitExclusive) {
+        return (int)(Math.random() * limitExclusive);
     }
     
     private void updateTileNumbers() {
@@ -124,82 +123,34 @@ public class Board {
 
     // row = A-Z
     // Column = 1-#
-    // isClick = player clicking or flagging
-    public boolean doAction(int row, int column, boolean isFlag) {
-
-        Tile chosenTile = tiles.get(row).get(column);
+    public boolean doAction(int row, int column, Tool tool) {
+        TileTuple chosenTileInfo = new TileTuple(tiles.get(row).get(column), row, column);
         boolean done = false;
-
-        if(!isFlag) {
-            done = doActionClicking(row, column, chosenTile);
+    
+        if(!madeFirstClick) {
+            playTimer.startStopWatch();
+            madeFirstClick = true;
         }
-        else {
-            done = doActionFlagging(row, column, chosenTile);
+        
+        switch(tool) {
+            case CLICK:
+                done = new Click().performAction(chosenTileInfo, this);
+                break;
+            case FLAG:
+                done = new Flag().performAction(chosenTileInfo, this);
+                break;
         }
+        
         checkForWinState();
 
         return done;
     }
-
-    private boolean doActionClicking(int row, int col, Tile tile) {
-        boolean done = false;
-        switch (tile.getCurrentState()) {
-            case UNCOVERED:
-                System.out.println();
-                System.out.println("That tile has already been uncovered. Please enter the coordinates of a different tile.");
-                break;
-            case COVERED:
-                if(!madeFirstClick) {
-                    playTimer.startStopWatch();
-                    madeFirstClick = true;
-                }
-                
-                if (tile.isBomb()) {
-                    setGameOver(true);
-                    playTimer.stopStopWatch();
-                } else {
-                    if (tile.getNumberOfBombsNearby() == 0) {
-                        int uncovered = processPossibleIslandOfZeros(row, col);
-                        remainingTiles -= uncovered;
-                    } else {
-                        remainingTiles--;
-                    }
-                }
-                tile.setState(TileState.UNCOVERED);
-                done = true;
-                break;
-            case FLAGGED:
-                System.out.println();
-                System.out.println("A flagged tile cannot be clicked. Please enter the coordinates of a different tile.");
-                break;
-        }
-        return done;
-    }
-
-
-    private boolean doActionFlagging(int row, int col, Tile tile) {
-        boolean done = false;
-        switch (tile.getCurrentState()) {
-           case UNCOVERED:
-               System.out.println();
-               System.out.println("An uncovered tile cannot be flagged. Please enter the coordinates of a different tile.");
-               break;
-           case COVERED:
-               tile.setState(TileState.FLAGGED);
-               done = true;
-               decrementFlagCount();
-               break;
-           case FLAGGED:
-               tile.setState(TileState.COVERED);
-               done = true;
-               break;
-            }
-
-        return done;
-    }
     
-    
-    private int processPossibleIslandOfZeros(int row, int column) {
+    // package private for Action delegate
+    int processPossibleIslandOfZeros(TileTuple tileInfo) {
+        int row = tileInfo.row;
+        int column = tileInfo.column;
+        
         int numberOfTilesUncovered = 0;
         // Create a LinkedList (FIFO) of tiles potentially part of the island of zeros
         // Put the first one in the list to process it
@@ -244,8 +195,7 @@ public class Board {
                 0 <= column && column < getColumns();
     }
 
-    // Package private for testing?
-    Tile getTile(int row, int column) {
+    private Tile getTile(int row, int column) {
         return tiles.get(row).get(column);
     }
 
@@ -282,21 +232,32 @@ public class Board {
         return isGameOver;
     }
 
+    // Maybe don't take in boolean as we only want to set it to true?
     public void setGameOver(boolean gameOver) {
+        if(gameOver) {
+            playTimer.stopStopWatch();
+        }
+        
         isGameOver = gameOver;
     }
 
     public boolean wasGameWon() {
         return gameWon;
     }
-
+    
+    // Maybe don't take in boolean as we only want to set it to true?
     private void setGameWon(boolean gameWon) {
         this.gameWon = gameWon;
     }
-
-    // package private for testing
+    
+    // package private for Action delegate
     int getRemainingTiles() {
         return remainingTiles;
+    }
+    
+    // package private for Action delegate
+    void decreaseRemainingTilesByAmount(int amount) {
+        remainingTiles = getRemainingTiles() - amount;
     }
 
     public int getFlagCount() {
@@ -306,8 +267,14 @@ public class Board {
     private void setFlagCount(int flagCount) {
         this.flagCount = flagCount;
     }
-
-    private void decrementFlagCount() {
+    
+    // package private for Action delegate
+    void decrementFlagCount() {
         setFlagCount(getFlagCount() - 1);
+    }
+    
+    // package private for Action delegate
+    void incrementFlagCount() {
+        setFlagCount(getFlagCount() + 1);
     }
 }

@@ -5,14 +5,18 @@ public class Player {
     private int totalGamesPlayed = 0;
     private int totalWins = 0;
     private int score = 0;
-    private boolean usingFlagTool = false;
+    private Tool currentTool = Tool.CLICK;
 
     public Player(String name) {
         this.name = name;
     }
 
     public void swapTool() {
-        setUsingFlagTool(!isUsingFlagTool());
+        if(getCurrentTool().equals(Tool.CLICK)) {
+            setCurrentTool(Tool.FLAG);
+        } else if(getCurrentTool().equals(Tool.FLAG)) {
+            setCurrentTool(Tool.CLICK);
+        }
     }
 
     public int getLoses() {
@@ -51,12 +55,12 @@ public class Player {
         this.score = score;
     }
 
-    public boolean isUsingFlagTool() {
-        return usingFlagTool;
+    public Tool getCurrentTool() {
+        return currentTool;
     }
 
-    public void setUsingFlagTool(boolean toolFlag) {
-        usingFlagTool = toolFlag;
+    public void setCurrentTool(Tool tool) {
+        this.currentTool = tool;
     }
 
     @Override
@@ -67,6 +71,6 @@ public class Player {
                 getTotalGamesPlayed(),
                 getTotalWins(),
                 getScore(),
-                isUsingFlagTool());
+                getCurrentTool());
     }
 }
