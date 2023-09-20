@@ -25,6 +25,7 @@ class HelpMenu {
         exitMenu();
     }
 
+    //TODO: only read the file once
     private void displayMenu() {
         try {
             String help = Files.readString(Path.of("resources/Help-Menu.txt"));
