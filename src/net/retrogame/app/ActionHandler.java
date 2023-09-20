@@ -10,7 +10,6 @@ public class ActionHandler {
     private final Prompter prompter;
     private final HelpMenu helpMenu;
 
-    //private boolean playerIsClicking = true;
     private Board board = null;
     private Player player = null;
     private boolean retry = true;
@@ -47,11 +46,11 @@ public class ActionHandler {
                 helpMenu.help();
                 validInput = true;
             }
-            //else if (userInput.equals("X")){
-                //setRetry(false);
-                //board.setGameOver(true);
-                //validInput = true;
-            //}
+            else if (userInput.equals("X")){
+                setRetry(false);
+                board.setGameOver(true); //breaks us out of while loop in newGame()
+                validInput = true; //breaks us out of this while look
+            }
             else if (userInput.length()==2 || userInput.length()==3){
 
                 if (areValidCoords(userInput)) {
