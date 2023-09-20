@@ -96,6 +96,8 @@ public class Controller {
                 e.printStackTrace();
             }
         }
+    
+        System.out.println("Total time played: " + board.getPlayTime());
     }
 
     private void promptUserForRetry() {
