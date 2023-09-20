@@ -2,6 +2,7 @@ package net.retrogame.app;
 import com.apps.util.Console;
 import com.apps.util.Prompter;
 import static net.retrogame.ConsoleColor.*;
+import static net.retrogame.ConsoleDisplayUtil.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,10 +12,13 @@ import java.util.Locale;
 
 class HelpMenu {
     private final Prompter prompter;
-    private final String menuString = readInMenu();
+    private final FileLoader fileLoader;
+    private final String menuString;
 
-    public HelpMenu(Prompter prompter) {
+    public HelpMenu(Prompter prompter, FileLoader fileLoader) {
         this.prompter = prompter;
+        this.fileLoader = fileLoader;
+        this.menuString = fileLoader.getHelpMenu();
     }
 
     public void help(){
@@ -24,19 +28,6 @@ class HelpMenu {
         displayBoardKey();
         System.out.println();
         exitMenu();
-    }
-
-    private String readInMenu() {
-        String help = null;
-
-        try {
-            help = Files.readString(Path.of("resources/Help-Menu.txt"));
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return help;
     }
 
     //TODO: only read the file once
@@ -51,9 +42,9 @@ class HelpMenu {
                 "\t\tBoard Key\n" +
                 "\t\t---------\n" +
                 "\t\tBLACK tiles are still covered\n" +
-	            "\t\t" + YELLOW_BG + BLACK_FG +"YELLOW" + RESET_COLOR + " tiles have been flagged\n" +
-                "\t\t" + RED_BG + BLACK_FG + "RED" + RESET_COLOR + " tiles are bombs\n" +
-                "\t\t" + GREEN_BG + BLACK_FG + "GREEN" + RESET_COLOR + " tiles have been uncovered and are NOT bombs\n");
+	            "\t\t" + createStringWithColorAndReset("YELLOW", YELLOW_BG) + " tiles have been flagged\n" +
+                "\t\t" + createStringWithColorAndReset("RED", RED_BG) + " tiles are bombs\n" +
+                "\t\t" + createStringWithColorAndReset("GREEN", GREEN_BG) + " tiles have been uncovered and are NOT bombs\n");
     }
 
     private void exitMenu() {

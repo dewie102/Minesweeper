@@ -4,6 +4,10 @@ import com.apps.util.Prompter;
 import net.retrogame.Board;
 import net.retrogame.Player;
 
+import static net.retrogame.ConsoleColor.GREEN_BG;
+import static net.retrogame.ConsoleColor.YELLOW_BG;
+import static net.retrogame.ConsoleDisplayUtil.createStringWithColorAndReset;
+
 public class ActionHandler {
     private final Prompter prompter;
     private final HelpMenu helpMenu;
@@ -24,8 +28,8 @@ public class ActionHandler {
         System.out.println("What would you like to do next?");
         System.out.println();
         System.out.println(
-        "Current tool: " + (player.isUsingFlagTool() ? "flagging" : "clicking") + "\n" +
-        "[S] to swap to " + (player.isUsingFlagTool() ? "clicking" : "flagging") + "\n" +
+        "Current tool: " + (player.isUsingFlagTool() ? createStringWithColorAndReset("flagging", YELLOW_BG) : createStringWithColorAndReset("clicking", GREEN_BG)) + "\n" +
+        "[S] to swap to " + (player.isUsingFlagTool() ? createStringWithColorAndReset("clicking", GREEN_BG) : createStringWithColorAndReset("flagging", YELLOW_BG)) + "\n" +
         "[H] for help\n" +
         "[X] to exit the game\n" +
         "[e.g B8] coordinates to select a tile");

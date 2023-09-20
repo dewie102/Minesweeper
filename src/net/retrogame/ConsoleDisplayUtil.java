@@ -105,8 +105,8 @@ public class ConsoleDisplayUtil {
         return BOARD_BACKGROUND_COLOR + " ". repeat(BORDER_SPACING_NO_NUMBER) + ConsoleColor.RESET_COLOR;
     }
     
-    static String createStringWithColorAndReset(String string, ConsoleColor color) {
-        return color + string + ConsoleColor.RESET_COLOR;
+    public static String createStringWithColorAndReset(String string, ConsoleColor color) {
+        return color + ConsoleColor.BLACK_FG.toString() + string + ConsoleColor.RESET_COLOR;
     }
     
     static String createStringWithDefaultColorAndReset(String string) {

@@ -15,7 +15,8 @@ import net.retrogame.TileState;
 public class Controller {
 
     private final static Prompter prompter = new Prompter(new Scanner(System.in));
-    private final static HelpMenu helpMenu = new HelpMenu(prompter);
+    private final static FileLoader fileLoader = new FileLoader();
+    private final static HelpMenu helpMenu = new HelpMenu(prompter, fileLoader);
     private final ActionHandler handler = new ActionHandler(prompter, helpMenu);
 
     private Board board;
