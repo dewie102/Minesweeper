@@ -34,6 +34,12 @@ public class ActionHandler {
                 "Enter [H]elp to view the key and game instructions." ).toUpperCase().trim();
 
         while(!validInput) {
+            String invalidInputPrompt = "Please enter a valid input. Valid inputs are " +
+                    "the coordinates of the tile you would like to "+ toolVerb() +
+                    " in row-column order with no spaces (e.g. B8)," +
+                    " or [S] to [S]wap over to "+oppositeToolVerbPresentTense()+" mode.\n" +
+                    "Enter [H]elp to view the key and game instructions.";
+            
             if (userInput.equals("S")){
                 player.swapTool();
                 validInput = true;
@@ -54,19 +60,11 @@ public class ActionHandler {
                     }
                 }
                 else {
-                    userInput = prompter.prompt("Please enter a valid input. Valid inputs are " +
-                            "the coordinates of the tile you would like to "+ toolVerb() +
-                            " in row-column order with no spaces (e.g. B8)," +
-                            " or [S] to [S]wap over to "+oppositeToolVerbPresentTense()+" mode.\n" +
-                            "Enter [H]elp to view the key and game instructions.").toUpperCase().trim();
+                    userInput = prompter.prompt(invalidInputPrompt).toUpperCase().trim();
                 }
             }
             else {
-                userInput = prompter.prompt("Please enter a valid input. Valid inputs are " +
-                        "the coordinates of the tile you would like to "+ toolVerb() +
-                        " in row-column order with no spaces (e.g. B8)," +
-                        " or [S] to [S]wap over to "+oppositeToolVerbPresentTense()+" mode.\n" +
-                        "Enter [H]elp to view the key and game instructions.").toUpperCase().trim();
+                userInput = prompter.prompt(invalidInputPrompt).toUpperCase().trim();
             }
         }
     }
@@ -78,14 +76,9 @@ public class ActionHandler {
         boolean done = false;
 
         row = input.charAt(0) - 'A';
-
-        if (input.length() == 2) {
-            // By subtracting by '1' instead of '0' we don't have the off by one logic to remember!
-            col = input.charAt(1) - '1';
-        }
-        else {
-            col = Integer.parseInt(input.substring(1, 2)) - 1;
-        }
+    
+        // Substring starts at index 1 till the end of the string
+        col = Integer.parseInt(input.substring(1)) - 1;
 
         done = board.doAction(row, col, player.isUsingFlagTool());
 
@@ -187,14 +180,6 @@ public class ActionHandler {
         }
         return tool;
     }
-
-    /*public boolean isPlayerClicking() {
-        return playerIsClicking;
-    }
-
-    public void setPlayerIsClicking(boolean playerIsClicking) {
-        this.playerIsClicking = playerIsClicking;
-    }*/
 
     public void setBoard(Board board) {
         this.board = board;
