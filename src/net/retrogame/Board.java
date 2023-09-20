@@ -1,13 +1,12 @@
 package net.retrogame;
 
+import static net.retrogame.ConsoleDisplayUtil.*;
+
 import java.util.*;
 
 public class Board {
     private static final int DEFAULT_ROW_COLUMN_SIZE = 9;
     private static final int DEFAULT_NUMBER_OF_BOMBS = 10;
-    private static final int BOARD_DISPLAY_SPACE = 5;
-    private static final int BORDER_SPACING_NO_NUMBER = 2;
-    static final ConsoleColor BOARD_BACKGROUND_COLOR = ConsoleColor.GRAY_BG;
     
     private final int rows;
     private final int columns;
@@ -36,28 +35,30 @@ public class Board {
     }
     
     public void showBoard() {
-        String middle = buildBoardMiddle();
-
-        System.out.println();
-        System.out.printf("Flags: %s\n", getFlagCount());
-        System.out.printf("Timer: %s\n", playTimer.getElapsedTimeSinceStartInSeconds());
-        System.out.println(BOARD_BACKGROUND_COLOR + buildBoardHeader() + ConsoleColor.RESET_COLOR);
-        System.out.println(BOARD_BACKGROUND_COLOR + buildBoardTop() + ConsoleColor.RESET_COLOR);
-
+        String middle = buildBoardMiddle(getColumns()); // Build the middle row once since it doesn't change
+        
+        System.out.println(); // Blank line for clarity
+        System.out.println(buildBoardStats(getFlagCount(), playTimer.getElapsedTimeSinceStartInSeconds()));
+        System.out.println(buildBoardHeader(getColumns())); // Display the header
+        System.out.println(buildBoardTop(getColumns())); // Display the column numbers
+        
         for(int row = 0; row < getRows(); row++) {
-            System.out.print(BOARD_BACKGROUND_COLOR);
-            System.out.print((char)('A' + row) + " ║"); // Left border
+            // Left border with character
+            System.out.print(createStringWithDefaultColorAndReset((char)('A' + row) + " ║"));
             for(int column = 0; column < getColumns(); column++) {
                 // displayTile sets color based on state and sets the appropriate spaces
                 System.out.printf("%s║", getTile(row, column).displayTile());
             }
-            System.out.print(BOARD_BACKGROUND_COLOR);
-            System.out.print(" ".repeat(BORDER_SPACING_NO_NUMBER) + ConsoleColor.RESET_COLOR +"\n"); // newline
+            // Right Border with no letters/ numbers
+            System.out.println(buildBorderWithNoNumber());
+            
+            // Display the middle string if we are not the last row
             if(row != getRows() - 1) {
-                System.out.println(BOARD_BACKGROUND_COLOR + middle  + ConsoleColor.RESET_COLOR);
+                System.out.println(middle);
             }
         }
-        System.out.println(BOARD_BACKGROUND_COLOR + buildBoardBottom() + ConsoleColor.RESET_COLOR);
+        // Display the last row
+        System.out.println(buildBoardBottom(getColumns()));
     }
     
     public void instantiateBoard() {
@@ -90,48 +91,6 @@ public class Board {
                 System.out.println("Invalid placement, bomb present");
             }
         }
-    }
-    
-    private int processPossibleIslandOfZeros(int row, int column) {
-        int numberOfTilesUncovered = 0;
-        // Create a LinkedList (FIFO) of tiles potentially part of the island of zeros
-        // Put the first one in the list to process it
-        Queue<TileTuple> tilesToProcess = new LinkedList<>();
-        tilesToProcess.add(new TileTuple(getTile(row, column), row, column));
-        
-        // HashSet of all the tiles we have already visited so we don't run into a loop
-        Set<Tile> visited = new HashSet<>();
-        
-        while(!tilesToProcess.isEmpty()) {
-            // Remove the top tile with coordinates and separate the pieces
-            TileTuple tuple = tilesToProcess.remove();
-            Tile currentTile = tuple.tile;
-            int currentRow = tuple.row;
-            int currentColumn = tuple.column;
-    
-            // If we have not visited this tile and we are part of the 0 island proceed
-            if(!visited.contains(currentTile) && currentTile.getNumberOfBombsNearby() == 0 && currentTile.getCurrentState() == TileState.COVERED) {
-                currentTile.setState(TileState.UNCOVERED); // Set tile to uncovered
-                visited.add(currentTile); // Add tile to visited
-                numberOfTilesUncovered++;
-
-                // Check all 8 directions and if it is in bounds, add it to the list to be processed
-                for (Direction currentDirection : Direction.values()) {
-                    int newX = currentRow + currentDirection.x;
-                    int newY = currentColumn + currentDirection.y;
-                    if (inBounds(newX, newY)) {
-                        tilesToProcess.add(new TileTuple(getTile(newX, newY), newX, newY));
-                    }
-                }
-            } else if(!visited.contains(currentTile) && currentTile.getCurrentState() == TileState.COVERED){
-                // else we visited a cell that we haven't visited and the numberOfBombsNearby is not zero, so uncover it
-                currentTile.setState(TileState.UNCOVERED);
-                visited.add(currentTile); // Add tile to visited
-                numberOfTilesUncovered++;
-            }
-        }
-
-        return numberOfTilesUncovered;
     }
     
     private int randomCoord(int limitExclusive) {
@@ -238,6 +197,46 @@ public class Board {
 
         return done;
     }
+    
+    
+    private int processPossibleIslandOfZeros(int row, int column) {
+        int numberOfTilesUncovered = 0;
+        // Create a LinkedList (FIFO) of tiles potentially part of the island of zeros
+        // Put the first one in the list to process it
+        Queue<TileTuple> tilesToProcess = new LinkedList<>();
+        tilesToProcess.add(new TileTuple(getTile(row, column), row, column));
+        
+        // HashSet of all the tiles we have already visited so we don't run into a loop
+        Set<Tile> visited = new HashSet<>();
+        
+        while(!tilesToProcess.isEmpty()) {
+            // Remove the top tile with coordinates and separate the pieces
+            TileTuple tuple = tilesToProcess.remove();
+            Tile currentTile = tuple.tile;
+            int currentRow = tuple.row;
+            int currentColumn = tuple.column;
+            
+            if(!visited.contains(currentTile) && currentTile.getCurrentState() == TileState.COVERED) {
+                // If we are part of the 0 island proceed by adding the proper neighbors into the list
+                if (currentTile.getNumberOfBombsNearby() == 0) {
+                    // Check all 8 directions and if it is in bounds, add it to the list to be processed
+                    for (Direction currentDirection : Direction.values()) {
+                        int newX = currentRow + currentDirection.x;
+                        int newY = currentColumn + currentDirection.y;
+                        if (inBounds(newX, newY)) {
+                            tilesToProcess.add(new TileTuple(getTile(newX, newY), newX, newY));
+                        }
+                    }
+                }
+    
+                visited.add(currentTile); // Add tile to visited
+                currentTile.setState(TileState.UNCOVERED); // Uncover tile
+                numberOfTilesUncovered++; // increment number of tiles uncovered
+            }
+        }
+        
+        return numberOfTilesUncovered;
+    }
 
     private boolean inBounds(int row, int column) {
 
@@ -310,94 +309,5 @@ public class Board {
 
     private void decrementFlagCount() {
         setFlagCount(getFlagCount() - 1);
-    }
-
-    private String buildBoardHeader() {
-        //String header = String.format("     1     2     3     4     5     6     7     8     9   ");
-        String intersectionSpace = " ";
-        StringBuilder header = new StringBuilder();
-        // This pushes over everything for the Rows display
-        header.append(" ".repeat(BORDER_SPACING_NO_NUMBER)); // 2
-        header.append(intersectionSpace); // 1
-
-        // Set row to 1 and <= getRows as we want numbers 1-9 not 0-8
-        for(int row = 1; row <= getRows(); row++) {
-            header.append(" ".repeat(BORDER_SPACING_NO_NUMBER)); // 2
-            header.append(row); // number
-            if(row >= 10) {
-                header.append(" ".repeat(BORDER_SPACING_NO_NUMBER - 1)); // 1
-            } else {
-                header.append(" ".repeat(BORDER_SPACING_NO_NUMBER)); // 2
-            }
-            header.append(intersectionSpace); // 1
-        }
-
-        header.append(" ".repeat(BORDER_SPACING_NO_NUMBER));
-
-        return header.toString();
-    }
-
-    private String buildBoardTop() {
-        //String top = String.format("  ╔═════╦═════╦═════╦═════╦═════╦═════╦═════╦═════╦═════╗");
-
-        StringBuilder top = new StringBuilder();
-        top.append(" ".repeat(BORDER_SPACING_NO_NUMBER));
-        top.append("╔");
-        top.append("═".repeat(BOARD_DISPLAY_SPACE));
-
-        // 1 less then getRows as we already did the first one
-        for(int row = 0; row < getRows() - 1; row++) {
-            top.append("╦");
-            top.append("═".repeat(BOARD_DISPLAY_SPACE));
-        }
-
-        top.append("╗");
-
-        top.append(" ".repeat(BORDER_SPACING_NO_NUMBER));
-
-        return top.toString();
-    }
-
-    private String buildBoardMiddle() {
-        // String middle = String.format("  ╠═════╬═════╬═════╬═════╬═════╬═════╬═════╬═════╬═════╣");
-
-        StringBuilder middle = new StringBuilder();
-
-        middle.append(" ".repeat(BORDER_SPACING_NO_NUMBER));
-        middle.append("╠");
-        middle.append("═".repeat(BOARD_DISPLAY_SPACE));
-
-        // 1 less then getRows as we already did the first one
-        for(int row = 0; row < getRows() - 1; row++) {
-            middle.append("╬");
-            middle.append("═".repeat(BOARD_DISPLAY_SPACE));
-        }
-
-        middle.append("╣");
-
-        middle.append(" ".repeat(BORDER_SPACING_NO_NUMBER));
-
-        return middle.toString();
-    }
-
-    private String buildBoardBottom() {
-        //String bottom = String.format("  ╚═════╩═════╩═════╩═════╩═════╩═════╩═════╩═════╩═════╝");
-
-        StringBuilder bottom = new StringBuilder();
-        bottom.append(" ".repeat(BORDER_SPACING_NO_NUMBER));
-        bottom.append("╚");
-        bottom.append("═".repeat(BOARD_DISPLAY_SPACE));
-
-        // 1 less then getRows as we already did the first one
-        for(int row = 0; row < getRows() - 1; row++) {
-            bottom.append("╩");
-            bottom.append("═".repeat(BOARD_DISPLAY_SPACE));
-        }
-
-        bottom.append("╝");
-
-        bottom.append(" ".repeat(BORDER_SPACING_NO_NUMBER));
-
-        return bottom.toString();
     }
 }
