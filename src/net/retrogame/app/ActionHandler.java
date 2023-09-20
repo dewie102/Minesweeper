@@ -2,9 +2,7 @@ package net.retrogame.app;
 
 import com.apps.util.Prompter;
 import net.retrogame.Board;
-import net.retrogame.ConsoleColor;
 import net.retrogame.Player;
-import net.retrogame.TileState;
 
 public class ActionHandler {
     private final Prompter prompter;
@@ -36,7 +34,7 @@ public class ActionHandler {
         userInput = prompter.prompt(">").toUpperCase().trim();
 
         while(!validInput) {
-            String invalidInputPrompt = "Please enter a valid input. Enter H if you need help.";
+            String invalidInputPrompt = "Please enter a valid input. Enter H if you need help.\n>c";
             
             if (userInput.equals("S")){
                 player.swapTool();
@@ -51,19 +49,13 @@ public class ActionHandler {
                 board.setGameOver(true); //breaks us out of while loop in newGame()
                 validInput = true; //breaks us out of this while look
             }
-            else if (userInput.length()==2 || userInput.length()==3){
-
-                if (areValidCoords(userInput)) {
-                    boolean actionTaken = doAction(userInput);
-                    if (actionTaken) {
-                        validInput = true;
-                    }
-                    else {
-                        userInput = prompter.prompt(">").toUpperCase().trim();
-                    }
+            else if (areValidCoordinates(userInput)) {
+                boolean actionTaken = doAction(userInput);
+                if (actionTaken) {
+                    validInput = true;
                 }
                 else {
-                    userInput = prompter.prompt(invalidInputPrompt).toUpperCase().trim();
+                    userInput = prompter.prompt(">").toUpperCase().trim();
                 }
             }
             else {
@@ -88,51 +80,23 @@ public class ActionHandler {
         return done;
     }
 
-    private boolean areValidCoords(String input) {
+    private boolean areValidCoordinates(String input) {
 
         boolean isValid = false;
-
-        if (input.length()==2) {
-            isValid = areValidCoordsLength2(input);
-        }
-
-        if (input.length()==3) {
-            isValid = areValidCoordsLength3(input);
+    
+        if(input.matches("[A-Za-z]\\d{1,2}")) {
+            char rowString = input.substring(0, 1).charAt(0);
+            String columnString = input.substring(1);
+        
+            int row = rowString - 'A';
+            int column = Integer.parseInt(columnString) - 1;
+        
+            if(board.inBounds(row, column)) {
+                isValid = true;
+            }
         }
 
         return isValid;
-    }
-
-    // ZR TODO: Could use the board.inBound(row, column) to validate the ints are in the boundaries
-    private boolean areValidCoordsLength2(String input) {
-        boolean inputIsValid = true;
-        Character firstChar = input.charAt(0); //should be LETTER - rows
-        Character secondChar = input.charAt(1); //should be NUMBER - cols
-
-        if ((!Character.isDigit(secondChar)) ||
-            (!Character.isAlphabetic(firstChar)) ||
-            (!board.inBounds((firstChar - 'A'),((int) secondChar - '1') ) )
-           ){
-
-            inputIsValid = false;
-        }
-
-        return inputIsValid;
-    }
-
-    private boolean areValidCoordsLength3(String input) {
-        boolean inputIsValid = true;
-        String secondTwoChars = input.substring(1,2);
-        Character firstChar = input.charAt(0);
-
-        if((!secondTwoChars.matches("\\d{2}")) ||
-           (!Character.isAlphabetic(firstChar)) ||
-           (!board.inBounds(firstChar - 'A', Integer.parseInt(secondTwoChars) - '1') )
-          ){
-            inputIsValid = false;
-        }
-
-        return inputIsValid;
     }
 
     public void setBoard(Board board) {
