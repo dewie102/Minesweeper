@@ -40,20 +40,19 @@ public class Controller {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        createUser("Josh");
+        handler.setPlayer(player);
     }
 
     public void newGame() {
         Console.clear();
         createDefaultBoard();
-        createUser();
         handler.setBoard(board);
-        handler.setPlayer(player);
         player.setTotalGamesPlayed(player.getTotalGamesPlayed()+1);
-
         while (!board.isGameOver()) {
             play();
         }
-
 
         //If user entered X to exit directly, all of this will be skipped.
         if (handler.willRetry()) {
@@ -72,8 +71,8 @@ public class Controller {
         board.instantiateBoard();
     }
 
-    private void createUser() {
-        player = new Player("Josh");
+    private void createUser(String name) {
+        player = new Player(name);
     }
 
     private void play() {
@@ -115,7 +114,6 @@ public class Controller {
         String userInput = null;
         boolean validInput = false;
 
-        System.out.println(player.toString());
         System.out.println();
         userInput = prompter.prompt("Would you like to play again? Enter [Y] to start a new game " +
                 "or [N]o to quit. ");

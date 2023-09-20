@@ -11,6 +11,7 @@ import java.util.Locale;
 
 class HelpMenu {
     private final Prompter prompter;
+    private final String menuString = readInMenu();
 
     public HelpMenu(Prompter prompter) {
         this.prompter = prompter;
@@ -25,15 +26,22 @@ class HelpMenu {
         exitMenu();
     }
 
-    //TODO: only read the file once
-    private void displayMenu() {
+    private String readInMenu() {
+        String help = null;
+
         try {
-            String help = Files.readString(Path.of("resources/Help-Menu.txt"));
-            System.out.println(help);
+            help = Files.readString(Path.of("resources/Help-Menu.txt"));
 
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        return help;
+    }
+
+    //TODO: only read the file once
+    private void displayMenu() {
+        System.out.println(menuString);
     }
 
     private void displayBoardKey(){
