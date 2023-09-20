@@ -1,5 +1,7 @@
 package net.retrogame;
 
+import net.retrogame.tile.*;
+
 import static net.retrogame.ConsoleDisplayUtil.*;
 
 import java.util.*;
@@ -134,10 +136,10 @@ public class Board {
         
         switch(tool) {
             case CLICK:
-                done = new Click().performAction(chosenTileInfo, this);
+                done = new Click().execute(chosenTileInfo, this);
                 break;
             case FLAG:
-                done = new Flag().performAction(chosenTileInfo, this);
+                done = new Flag().execute(chosenTileInfo, this);
                 break;
         }
         
@@ -146,8 +148,7 @@ public class Board {
         return done;
     }
     
-    // package private for Action delegate
-    int processPossibleIslandOfZeros(TileTuple tileInfo) {
+    public int processPossibleIslandOfZeros(TileTuple tileInfo) {
         int row = tileInfo.row;
         int column = tileInfo.column;
         
@@ -251,13 +252,11 @@ public class Board {
         this.gameWon = gameWon;
     }
     
-    // package private for Action delegate
-    int getRemainingTiles() {
+    private int getRemainingTiles() {
         return remainingTiles;
     }
     
-    // package private for Action delegate
-    void decreaseRemainingTilesByAmount(int amount) {
+    public void decreaseRemainingTilesByAmount(int amount) {
         remainingTiles = getRemainingTiles() - amount;
     }
 
@@ -269,13 +268,11 @@ public class Board {
         this.flagCount = flagCount;
     }
     
-    // package private for Action delegate
-    void decrementFlagCount() {
+    public void decrementFlagCount() {
         setFlagCount(getFlagCount() - 1);
     }
     
-    // package private for Action delegate
-    void incrementFlagCount() {
+    public void incrementFlagCount() {
         setFlagCount(getFlagCount() + 1);
     }
 }

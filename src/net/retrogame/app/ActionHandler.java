@@ -3,7 +3,7 @@ package net.retrogame.app;
 import com.apps.util.Prompter;
 import net.retrogame.Board;
 import net.retrogame.Player;
-import net.retrogame.Tool;
+import net.retrogame.tile.Tool;
 
 import static net.retrogame.ConsoleColor.GREEN_BG;
 import static net.retrogame.ConsoleColor.YELLOW_BG;
@@ -61,7 +61,7 @@ public class ActionHandler {
                     validInput = true;
                 }
                 else {
-                    userInput = prompter.prompt(">").toUpperCase().trim();
+                    userInput = prompter.prompt("> ").toUpperCase().trim();
                 }
             }
             else {

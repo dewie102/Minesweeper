@@ -8,9 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Scanner;
 import com.apps.util.Console;
-import net.retrogame.ConsoleColor;
 import net.retrogame.Player;
-import net.retrogame.TileState;
 
 public class Controller {
 

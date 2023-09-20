@@ -1,9 +1,11 @@
-package net.retrogame;
+package net.retrogame.tile;
 
-class Flag implements Action {
+import net.retrogame.Board;
+
+public class Flag implements Action {
     
     @Override
-    public boolean performAction(TileTuple tileInfo, Board board) {
+    public boolean execute(TileTuple tileInfo, Board board) {
         Tile tile = tileInfo.tile;
         
         boolean done = false;
