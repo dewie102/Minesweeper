@@ -7,9 +7,6 @@ import static net.retrogame.ConsoleDisplayUtil.*;
 import java.util.*;
 
 public class Board {
-    private static final int DEFAULT_ROW_COLUMN_SIZE = 9;
-    private static final int DEFAULT_NUMBER_OF_BOMBS = 10;
-    
     private final int rows;
     private final int columns;
     private final int numberOfBombs;
@@ -23,12 +20,6 @@ public class Board {
 
     private int remainingTiles;
     private int flagCount;
-
-    public Board() {
-        this.rows = DEFAULT_ROW_COLUMN_SIZE;
-        this.columns = DEFAULT_ROW_COLUMN_SIZE;
-        this.numberOfBombs = DEFAULT_NUMBER_OF_BOMBS;
-    }
     
     public Board(int rows, int columns, int numberOfBombs) {
         this.rows = rows;
@@ -88,9 +79,6 @@ public class Board {
             if(!tile.isBomb()) {
                 tile.setAsBomb(true);
                 bombCount++;
-                System.out.printf("BOMB: Row:%s, Column:%s\n", (char)(row + 'A'), column + 1);
-            } else {
-                System.out.println("Invalid placement, bomb present");
             }
         }
     }
@@ -127,7 +115,7 @@ public class Board {
     // Column = 1-#
     public boolean doAction(int row, int column, Tool tool) {
         TileTuple chosenTileInfo = new TileTuple(tiles.get(row).get(column), row, column);
-        boolean actionWasTaken = false;
+        boolean actionWasTaken;
     
         if(!madeFirstClick) {
             playTimer.startStopWatch();
@@ -135,7 +123,6 @@ public class Board {
         }
         
         actionWasTaken = ActionFactory.get(tool).execute(chosenTileInfo, this);
-        
         checkForWinState();
 
         return actionWasTaken;
@@ -151,7 +138,7 @@ public class Board {
         Queue<TileTuple> tilesToProcess = new LinkedList<>();
         tilesToProcess.add(new TileTuple(getTile(row, column), row, column));
         
-        // HashSet of all the tiles we have already visited so we don't run into a loop
+        // HashSet of all the tiles we have already visited, so we don't run into a loop
         Set<Tile> visited = new HashSet<>();
         
         while(!tilesToProcess.isEmpty()) {
