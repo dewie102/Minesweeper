@@ -6,7 +6,6 @@ package net.retrogame.tile;
  * to keep track of where things are in the board
  */
 public class TileTuple {
-    
     public final Tile tile;
     public final int row;
     public final int column;

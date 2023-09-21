@@ -17,15 +17,9 @@ public class DifficultyTuple {
     }
 
     public boolean equals(DifficultyTuple tuple) {
-        boolean result = false;
-
-        if(this.getNumberOfColumns() == tuple.getNumberOfColumns() &&
-           this.getNumberOfColumns() == tuple.getNumberOfColumns() &&
-           this.getNumberOfBombs() == tuple.getNumberOfBombs()){
-            result = true;
-        }
-
-        return result;
+        return  this.getNumberOfRows() == tuple.getNumberOfRows() &&
+                this.getNumberOfColumns() == tuple.getNumberOfColumns() &&
+                this.getNumberOfBombs() == tuple.getNumberOfBombs();
     }
 
     public int getNumberOfRows() {

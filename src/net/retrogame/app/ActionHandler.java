@@ -24,34 +24,37 @@ public class ActionHandler {
     }
 
     public void promptUserForAction() {
-
-        String userInput = null;
         boolean validInput = false;
+        
+        String flagging = createStringWithColorAndReset("flagging", YELLOW_BG);
+        String clicking = createStringWithColorAndReset("clicking", GREEN_BG);
+        
         System.out.println("What would you like to do next?");
         System.out.println();
+        
         System.out.println(
-        "Current tool: " + (player.getCurrentTool() == Tool.FLAG ? createStringWithColorAndReset("flagging", YELLOW_BG) : createStringWithColorAndReset("clicking", GREEN_BG)) + "\n" +
-        "[S] to swap to " + (player.getCurrentTool() == Tool.FLAG ? createStringWithColorAndReset("clicking", GREEN_BG) : createStringWithColorAndReset("flagging", YELLOW_BG)) + "\n" +
+        "Current tool: " + (player.getCurrentTool() == Tool.FLAG ? flagging : clicking) + "\n" +
+        "[S] to swap to " + (player.getCurrentTool() == Tool.FLAG ? clicking :flagging) + "\n" +
         "[H] for help\n" +
         "[X] to exit the game\n" +
         "[e.g B8] coordinates to select a tile");
 
         System.out.println();
-        userInput = prompter.prompt("> ").toUpperCase().trim();
+        String userInput = prompter.prompt("> ").toUpperCase().trim();
 
         while(!validInput) {
             String invalidInputPrompt = "Please enter a valid input. Enter H if you need help.\n> ";
             
             // If we add more tools we will need to fix this first if statement
-            if (userInput.equals("S")){
+            if ("S".equals(userInput)){
                 player.swapTool();
                 validInput = true;
             }
-            else if (userInput.equals("H")){
+            else if ("H".equals(userInput)){
                 helpMenu.help();
                 validInput = true;
             }
-            else if (userInput.equals("X")){
+            else if ("X".equals(userInput)){
                 setRetry(false);
                 board.setGameOver();
                 validInput = true;
@@ -72,19 +75,11 @@ public class ActionHandler {
     }
 
     private boolean doAction(String input) {
-        int row = 0;
-        int col = 0;
-
-        boolean actionWasTaken = false;
-
-        row = input.charAt(0) - 'A';
-    
+        int row = input.charAt(0) - 'A';
         // Substring starts at index 1 till the end of the string
-        col = Integer.parseInt(input.substring(1)) - 1;
+        int col = Integer.parseInt(input.substring(1)) - 1;
 
-        actionWasTaken = board.doAction(row, col, player.getCurrentTool());
-
-        return actionWasTaken;
+        return board.doAction(row, col, player.getCurrentTool());
     }
 
     private boolean areValidCoordinates(String input) {

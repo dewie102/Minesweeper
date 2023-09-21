@@ -3,7 +3,6 @@ package net.retrogame.tile;
 import java.util.EnumMap;
 
 public class ActionFactory {
-    
     private static final EnumMap<Tool, Action> actionOptions = new EnumMap<>(Tool.class);
     
     private ActionFactory() {

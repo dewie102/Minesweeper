@@ -17,7 +17,6 @@ class Timer {
     }
     
     public int getElapsedTimeSinceStartInSeconds() {
-        
         return startTime == 0 ? 0 : (int)((System.currentTimeMillis() - startTime) / 1000);
     }
     
