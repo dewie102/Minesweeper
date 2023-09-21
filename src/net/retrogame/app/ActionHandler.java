@@ -12,7 +12,7 @@ import static net.retrogame.ConsoleDisplayUtil.createStringWithColorAndReset;
 public class ActionHandler {
     private final Prompter prompter;
     private final HelpMenu helpMenu;
-    private final PlayerStatsDisplay statsDisplay;
+
 
     private Board board = null;
     private Player player = null;
@@ -21,7 +21,6 @@ public class ActionHandler {
     public ActionHandler(Prompter prompter, HelpMenu helpMenu) {
         this.prompter = prompter;
         this.helpMenu = helpMenu;
-        statsDisplay = new PlayerStatsDisplay(prompter);
     }
 
     public void promptUserForAction() {
@@ -35,7 +34,6 @@ public class ActionHandler {
         "[S] to swap to " + (player.getCurrentTool() == Tool.FLAG ? createStringWithColorAndReset("clicking", GREEN_BG) : createStringWithColorAndReset("flagging", YELLOW_BG)) + "\n" +
         "[H] for help\n" +
         "[X] to exit the game\n" +
-        "[P] to view your Player stats\n" +
         "[e.g B8] coordinates to select a tile");
 
         System.out.println();
@@ -56,10 +54,6 @@ public class ActionHandler {
             else if (userInput.equals("X")){
                 setRetry(false);
                 board.setGameOver(true);
-                validInput = true;
-            }
-            else if (userInput.equals("P")) {
-                statsDisplay.show(player);
                 validInput = true;
             }
             else if (areValidCoordinates(userInput)) {

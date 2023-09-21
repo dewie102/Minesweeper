@@ -13,8 +13,8 @@
 	is tracked above the board - starting with a number of flags equal to the number of bombs on the board.
 	If that number goes negative, that indicates that you have a flag somewhere that is not actually a bomb.
 
-	The timer above the board indicates how long you have been playing the current board in seconds. Try to beat your
-	best time for each level!
+	The timer above the board indicates how long you have been playing the current board in seconds.
+	Try to beat your best time for each level!
 
 		--------------
 		Valid Actions
@@ -23,4 +23,4 @@
 	Enter [S] to [S]wap from clicking mode to flagging mode, or vice versa.
 	Enter [H] to view this [H]elp menu.
 	Enter [X] to E[x]it the application.
-	Enter [P] to view your Player stats
+	Enter [P] to view your Player stats (in between games only)
