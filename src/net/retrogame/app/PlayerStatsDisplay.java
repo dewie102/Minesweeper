@@ -5,10 +5,6 @@ import net.retrogame.Player;
 
 class PlayerStatsDisplay {
 
-    //TODO: bug where, because loses is total - wins, shows as a loss before game is over
-    //TODO: save best time PER LEVEL
-    //TODO: read in user name at welcome screen
-
     private Player player;
     private final Prompter prompter;
 
@@ -27,10 +23,12 @@ class PlayerStatsDisplay {
 
         System.out.println(
                 "Player: " + player.getName() + "\n" +
-                "\tTotal Games Played:  " + player.getTotalGamesPlayed() + "\n" +
-                "\tTotal Wins:          " + player.getTotalWins() + "\n" +
-                "\tTotal Loses:         " + (player.getTotalGamesPlayed() - player.getTotalWins()) + "\n" +
-                "\tBest Time:           " + player.getBestTime() + "\n"
+                "\tTotal Games Played:       " + player.getTotalGamesPlayed() + "\n" +
+                "\tTotal Wins:               " + player.getTotalWins() + "\n" +
+                "\tTotal Loses:              " + (player.getTotalGamesPlayed() - player.getTotalWins()) + "\n" +
+                "\tBest Time [Beginner]:     " + player.getBestTimeB() + "\n" +
+                "\tBest Time [Intermediate]: " + player.getBestTimeI() + "\n" +
+                "\tBest Time [Expert]:       " + player.getBestTimeE()
         );
     }
 
