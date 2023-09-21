@@ -127,7 +127,7 @@ public class Board {
     // Column = 1-#
     public boolean doAction(int row, int column, Tool tool) {
         TileTuple chosenTileInfo = new TileTuple(tiles.get(row).get(column), row, column);
-        boolean done = false;
+        boolean actionWasTaken = false;
     
         if(!madeFirstClick) {
             playTimer.startStopWatch();
@@ -136,16 +136,16 @@ public class Board {
         
         switch(tool) {
             case CLICK:
-                done = new Click().execute(chosenTileInfo, this);
+                actionWasTaken = new Click().execute(chosenTileInfo, this);
                 break;
             case FLAG:
-                done = new Flag().execute(chosenTileInfo, this);
+                actionWasTaken = new Flag().execute(chosenTileInfo, this);
                 break;
         }
         
         checkForWinState();
 
-        return done;
+        return actionWasTaken;
     }
     
     public int processPossibleIslandOfZeros(TileTuple tileInfo) {
