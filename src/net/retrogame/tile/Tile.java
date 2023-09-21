@@ -19,11 +19,16 @@ public class Tile {
         if(getCurrentState().equals(TileState.UNCOVERED)) {
             if(isBomb()) {
                 colorSetting = ConsoleColor.RED_BG.toString() + ConsoleColor.BLACK_FG;
+                numberOfBombsDisplayString = "B";
             }
             
             if(getNumberOfBombsNearby() != 0) {
                 numberOfBombsDisplayString = String.format("%s", getNumberOfBombsNearby());
             }
+        }
+        
+        if(getCurrentState().equals(TileState.FLAGGED)) {
+            numberOfBombsDisplayString = "F";
         }
 
         String display = colorSetting +

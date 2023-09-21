@@ -17,7 +17,7 @@ public class Click implements Action {
                 break;
             case COVERED:
                 if (tile.isBomb()) {
-                    board.setGameOver(true);
+                    board.setGameOver();
                 } else {
                     if (tile.getNumberOfBombsNearby() == 0) {
                         int uncovered = board.processPossibleIslandOfZeros(tileInfo);
