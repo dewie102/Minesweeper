@@ -3,6 +3,9 @@ package net.retrogame.app;
 import com.apps.util.Prompter;
 import net.retrogame.Board;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Scanner;
 import com.apps.util.Console;
 import net.retrogame.DifficultyTuple;
@@ -50,6 +53,7 @@ public class Controller {
         createBoard(difficulty);
         actionHandler.setBoard(board);
         player.setTotalGamesPlayed(player.getTotalGamesPlayed()+1);
+        player.saveToCSVFile();
         while (!board.isGameOver()) {
             play();
         }
@@ -70,7 +74,36 @@ public class Controller {
     }
 
     private void createUser(String name) {
-        player = new Player(name);
+        File userStats = new File("data/"+name+"-stats.csv");
+        boolean existsAlready = userStats.exists();
+
+        if(existsAlready) {
+            loadUser(name);
+
+        }
+        else {
+            player = new Player(name);
+        }
+    }
+
+    private void loadUser(String name) {
+        try {
+            String fileContents = Files.readString(Path.of("data/" + name + "-stats.csv"));
+            String[] savedFields = fileContents.split(",");
+
+            String userName = savedFields[0];
+            int totalPlayed = Integer.parseInt(savedFields[1]);
+            int totalWon = Integer.parseInt(savedFields[2]);
+            long bestTimeB = Long.parseLong(savedFields[3]);
+            long bestTimeI = Long.parseLong(savedFields[4]);
+            long bestTimeE = Long.parseLong(savedFields[5]);
+
+            player = new Player (userName, totalPlayed, totalWon, bestTimeB, bestTimeI, bestTimeE);
+        }
+
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void play() {
@@ -93,6 +126,7 @@ public class Controller {
         }
     
         System.out.println("Total time played: " + board.getPlayTime());
+        player.saveToCSVFile();
     }
 
     private void promptUserForRetry() {
