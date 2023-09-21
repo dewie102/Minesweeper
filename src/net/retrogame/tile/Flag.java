@@ -16,12 +16,12 @@ public class Flag implements Action {
                 System.out.println("An uncovered tile cannot be flagged. Please enter the coordinates of a different tile.");
                 break;
             case COVERED:
-                tile.setState(TileState.FLAGGED);
+                tile.setState(Tile.State.FLAGGED);
                 board.decrementFlagCount();
                 done = true;
                 break;
             case FLAGGED:
-                tile.setState(TileState.COVERED);
+                tile.setState(Tile.State.COVERED);
                 board.incrementFlagCount();
                 done = true;
                 break;
