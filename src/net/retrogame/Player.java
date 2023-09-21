@@ -1,5 +1,7 @@
 package net.retrogame;
 
+import net.retrogame.tile.Tool;
+
 public class Player {
     private String name;
     private int totalGamesPlayed = 0; //updated every call to newGame()

@@ -8,16 +8,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Scanner;
 import com.apps.util.Console;
-import net.retrogame.ConsoleColor;
+import net.retrogame.DifficultyTuple;
 import net.retrogame.Player;
-import net.retrogame.TileState;
 
 public class Controller {
 
     private final static Prompter prompter = new Prompter(new Scanner(System.in));
     private final static FileLoader fileLoader = new FileLoader();
     private final static HelpMenu helpMenu = new HelpMenu(prompter, fileLoader);
-    private final ActionHandler handler = new ActionHandler(prompter, helpMenu);
+    private final ActionHandler actionHandler = new ActionHandler(prompter, helpMenu);
+    private final BoardDifficultyHandler difficultyHandler = new BoardDifficultyHandler(prompter);
 
     private Board board;
     private Player player;
@@ -26,9 +26,10 @@ public class Controller {
         welcome();
         Console.pause(2000);
         helpMenu.help();
-
-        while(handler.willRetry()) {
-            newGame();
+        
+        while(actionHandler.willRetry()) {
+            DifficultyTuple difficultyTuple = difficultyHandler.promptUserForDifficulty();
+            newGame(difficultyTuple);
         }
 
         goodbye();
@@ -42,33 +43,30 @@ public class Controller {
         //createUser uses that name
 
         createUser("Josh");
-        handler.setPlayer(player);
-
+        actionHandler.setPlayer(player);
     }
 
-    public void newGame() {
+    public void newGame(DifficultyTuple difficulty) {
         Console.clear();
-        createDefaultBoard();
-        handler.setBoard(board);
+        createBoard(difficulty);
+        actionHandler.setBoard(board);
         player.setTotalGamesPlayed(player.getTotalGamesPlayed()+1);
         while (!board.isGameOver()) {
             play();
         }
 
         //If user entered X to exit directly, all of this will be skipped.
-        if (handler.willRetry()) {
+        if (actionHandler.willRetry()) {
             Console.clear();
             board.showBoard(); // Added a show board to show that you hit a bomb
             System.out.println();
             gameOverMessage();
             promptUserForRetry();
         }
-
-
     }
 
-    private void createDefaultBoard() {
-        board = new Board();
+    private void createBoard(DifficultyTuple difficulty) {
+        board = new Board(difficulty.numberOfRows, difficulty.numberOfColumns, difficulty.numberOfBombs);
         board.instantiateBoard();
     }
 
@@ -81,7 +79,7 @@ public class Controller {
         System.out.println();
         board.showBoard();
         System.out.println();
-        handler.promptUserForAction();
+        actionHandler.promptUserForAction();
     }
 
     private void gameOverMessage() {
@@ -110,10 +108,10 @@ public class Controller {
         userInput = prompter.prompt("> ");
         while(!validInput) {
             if (userInput.toUpperCase().trim().equals("Y")) {
-                handler.setRetry(true);
+                actionHandler.setRetry(true);
                 validInput = true;
             } else if (userInput.toUpperCase().trim().equals("N")) {
-                handler.setRetry(false);
+                actionHandler.setRetry(false);
                 validInput = true;
             } else {
                 prompter.prompt("Please enter a valid option: [Y] to start a new game, or [N] to quit.\n> ");

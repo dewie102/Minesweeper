@@ -1,4 +1,6 @@
-package net.retrogame;
+package net.retrogame.tile;
+
+import net.retrogame.ConsoleColor;
 
 // Make a smart enum to include all color properties
 public enum TileState {

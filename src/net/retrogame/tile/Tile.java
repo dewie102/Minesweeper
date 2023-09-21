@@ -1,6 +1,9 @@
-package net.retrogame;
+package net.retrogame.tile;
 
-class Tile {
+import net.retrogame.ConsoleColor;
+import net.retrogame.ConsoleDisplayUtil;
+
+public class Tile {
     private TileState currentState;
     private int numberOfBombsNearby = 0;
     private boolean isBomb = false;

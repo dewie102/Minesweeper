@@ -1,4 +1,4 @@
-package net.retrogame;
+package net.retrogame.tile;
 
 /**
  * Custom Tuple for the Tiles

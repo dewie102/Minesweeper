@@ -3,7 +3,7 @@ package net.retrogame;
 public class ConsoleDisplayUtil {
     private static final int BOARD_DISPLAY_SPACE = 5;
     private static final int BORDER_SPACING_NO_NUMBER = 2;
-    static final ConsoleColor BOARD_BACKGROUND_COLOR = ConsoleColor.GRAY_BG;
+    public static final ConsoleColor BOARD_BACKGROUND_COLOR = ConsoleColor.GRAY_BG;
     
     private ConsoleDisplayUtil() {
     }
