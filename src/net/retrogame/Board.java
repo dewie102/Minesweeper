@@ -103,14 +103,14 @@ public class Board {
         for(int row = 0; row < getRows(); row++) {
             for(int column = 0; column < getColumns(); column++) {
                 if(!getTile(row, column).isBomb()) {
-                    int bombsNearby = GetBombsFromNeighbors(row, column);
+                    int bombsNearby = getBombsFromNeighbors(row, column);
                     getTile(row, column).setNumberOfBombsNearby(bombsNearby);
                 }
             }
         }
     }
 
-    private int GetBombsFromNeighbors(int row, int column) {
+    private int getBombsFromNeighbors(int row, int column) {
         int result = 0;
         for(Direction currentDirection : Direction.values()) {
             int newX = row + currentDirection.x;
@@ -189,6 +189,17 @@ public class Board {
         
         return numberOfTilesUncovered;
     }
+    
+    private void uncoverAllBombs() {
+        for(int row = 0; row < getRows(); row++) {
+            for(int column = 0; column < getColumns(); column++) {
+                Tile tile = getTile(row, column);
+                if(tile.isBomb()) {
+                    tile.setState(TileState.UNCOVERED);
+                }
+            }
+        }
+    }
 
     public boolean inBounds(int row, int column) {
 
@@ -206,8 +217,8 @@ public class Board {
 
     private void checkForWinState() {
         if(remainingTiles == 0) {
-            setGameWon(true);
-            setGameOver(true);
+            setGameWon();
+            setGameOver();
 
             playTimer.stopStopWatch();
             System.out.println("You WIN!");
@@ -234,22 +245,18 @@ public class Board {
         return isGameOver;
     }
 
-    // Maybe don't take in boolean as we only want to set it to true?
-    public void setGameOver(boolean gameOver) {
-        if(gameOver) {
-            playTimer.stopStopWatch();
-        }
-        
-        isGameOver = gameOver;
+    public void setGameOver() {
+        playTimer.stopStopWatch();
+        isGameOver = true;
+        uncoverAllBombs();
     }
 
     public boolean wasGameWon() {
         return gameWon;
     }
     
-    // Maybe don't take in boolean as we only want to set it to true?
-    private void setGameWon(boolean gameWon) {
-        this.gameWon = gameWon;
+    private void setGameWon() {
+        this.gameWon = true;
     }
     
     private int getRemainingTiles() {

@@ -53,7 +53,7 @@ public class ActionHandler {
             }
             else if (userInput.equals("X")){
                 setRetry(false);
-                board.setGameOver(true);
+                board.setGameOver();
                 validInput = true;
             }
             else if (areValidCoordinates(userInput)) {
