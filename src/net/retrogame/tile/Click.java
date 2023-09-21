@@ -26,7 +26,7 @@ public class Click implements Action {
                         board.decreaseRemainingTilesByAmount(1);
                     }
                 }
-                tile.setState(TileState.UNCOVERED);
+                tile.setState(Tile.State.UNCOVERED);
                 done = true;
                 break;
             case FLAGGED:

@@ -134,14 +134,7 @@ public class Board {
             madeFirstClick = true;
         }
         
-        switch(tool) {
-            case CLICK:
-                actionWasTaken = new Click().execute(chosenTileInfo, this);
-                break;
-            case FLAG:
-                actionWasTaken = new Flag().execute(chosenTileInfo, this);
-                break;
-        }
+        actionWasTaken = ActionFactory.get(tool).execute(chosenTileInfo, this);
         
         checkForWinState();
 
@@ -168,7 +161,7 @@ public class Board {
             int currentRow = tuple.row;
             int currentColumn = tuple.column;
             
-            if(!visited.contains(currentTile) && currentTile.getCurrentState() == TileState.COVERED) {
+            if(!visited.contains(currentTile) && currentTile.getCurrentState() == Tile.State.COVERED) {
                 // If we are part of the 0 island proceed by adding the proper neighbors into the list
                 if (currentTile.getNumberOfBombsNearby() == 0) {
                     // Check all 8 directions and if it is in bounds, add it to the list to be processed
@@ -182,7 +175,7 @@ public class Board {
                 }
     
                 visited.add(currentTile); // Add tile to visited
-                currentTile.setState(TileState.UNCOVERED); // Uncover tile
+                currentTile.setState(Tile.State.UNCOVERED); // Uncover tile
                 numberOfTilesUncovered++; // increment number of tiles uncovered
             }
         }
@@ -195,7 +188,7 @@ public class Board {
             for(int column = 0; column < getColumns(); column++) {
                 Tile tile = getTile(row, column);
                 if(tile.isBomb()) {
-                    tile.setState(TileState.UNCOVERED);
+                    tile.setState(Tile.State.UNCOVERED);
                 }
             }
         }

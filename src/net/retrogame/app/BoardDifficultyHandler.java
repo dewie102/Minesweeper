@@ -13,11 +13,10 @@ class BoardDifficultyHandler {
     
     DifficultyTuple promptUserForDifficulty() {
         DifficultyTuple result = null;
-        String userInput;
         boolean validInput = false;
         
         System.out.println();
-        userInput = prompter.prompt(buildDifficultyPrompt() + "> ").trim();
+        String userInput = prompter.prompt(buildDifficultyPrompt() + "> ").trim();
         
         while(!validInput) {
             if(userInput.matches("\\d")) {
@@ -71,40 +70,34 @@ class BoardDifficultyHandler {
     private DifficultyTuple getCustomBoardPropertiesFromUser() {
         DifficultyTuple result;
         
-        int row = promptUserForNumberToMaxValue("Please choose number of rows (min  2, ", 26, false);
-        int column = promptUserForNumberToMaxValue("Please choose number of columns (min  2, ", 99, false);
-        int bombs = promptUserForNumberToMaxValue("Please choose number of bombs (min  1, ", (row*column) - 1, true);
+        int row = promptUserForNumberToMaxValue("Please choose number of rows (min  2, ", 26);
+        int column = promptUserForNumberToMaxValue("Please choose number of columns (min  2, ", 99);
+        int bombs = promptUserForNumberToMaxValue("Please choose number of bombs (min  2, ", (row*column) - 1);
         
         result = new DifficultyTuple(row, column, bombs);
         
         return result;
     }
     
-    private int promptUserForNumberToMaxValue(String prompt, int maxValue, boolean forBombs) {
+    private int promptUserForNumberToMaxValue(String prompt, int maxValue) {
         int result = 1;
         
         String userInput;
         boolean validInput = false;
         
         System.out.println();
-        userInput = prompter.prompt(prompt + "max  " + maxValue + "): > ").trim();
+        userInput = prompter.prompt(prompt + "max  " + maxValue + "):\n> ").trim();
         
         while(!validInput) {
             if(userInput.matches("[0-9]+")) {
                 result = Integer.parseInt(userInput);
                 
-                if(!forBombs && 2 <= result && result <= maxValue) {
-                    validInput = true;
-                }
-                else if (forBombs && 1 <= result && result <=maxValue){
+                if(2 <= result && result <= maxValue) {
                     validInput = true;
                 }
             }
             
-            if(!validInput && forBombs) {
-                userInput = prompter.prompt("Please enter a valid number between [1 and " + maxValue + "]\n> ");
-            }
-            else if (!validInput && !forBombs) {
+            if (!validInput) {
                 userInput = prompter.prompt("Please enter a valid number between [2 and " + maxValue + "]\n> ");
             }
         }

@@ -4,7 +4,6 @@ import com.apps.util.Prompter;
 import net.retrogame.Board;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Scanner;
@@ -43,9 +42,6 @@ public class Controller {
         Console.pause(500);
         System.out.println("Enter your name:");
         String userInput = prompter.prompt("> ");
-
-
-
 
         createUser(userInput);
         actionHandler.setPlayer(player);
@@ -119,7 +115,6 @@ public class Controller {
     }
 
     private void gameOverMessage() {
-        String message = null;
         System.out.println();
         if (board.wasGameWon()){
             player.setTotalWins(player.getTotalWins() + 1);
@@ -135,34 +130,31 @@ public class Controller {
     }
 
     private void promptUserForRetry() {
-
-        String userInput = null;
         boolean validInput = false;
 
+        String menuOptions = "[Y]es to start a new game \n" +
+                             "[N]o to quit \n" +
+                             "[P] to view your current statistics";
+        
         System.out.println();
-        System.out.println("Would you like to play again? \n" +
-                "[Y]es to start a new game \n" +
-                "[N]o to quit \n" +
-                "[P] to view your current statistics");
-        userInput = prompter.prompt("> ");
+        System.out.println("Would you like to play again? \n" + menuOptions);
+        
+        String userInput = prompter.prompt("> ").toUpperCase().trim();
         while(!validInput) {
-            if (userInput.toUpperCase().trim().equals("Y")) {
+            if ("Y".equals(userInput)) {
                 actionHandler.setRetry(true);
                 validInput = true;
-            } else if (userInput.toUpperCase().trim().equals("N")) {
+            } else if ("N".equals(userInput)) {
                 actionHandler.setRetry(false);
                 validInput = true;
-            } else if (userInput.toUpperCase().trim().equals("P")) {
+            } else if ("P".equals(userInput)) {
                 Console.clear();
                 statsDisplay.show(player);
                 promptUserForRetry();
                 validInput = true;
             }
             else {
-                System.out.println("Please enter a valid option:\n" +
-                        "[Y]es to start a new game \n" +
-                        "[N]o to quit \n" +
-                        "[P] to view your current statistics");
+                System.out.println("Please enter a valid option:\n" + menuOptions);
                 userInput = prompter.prompt("> ");
             }
         }

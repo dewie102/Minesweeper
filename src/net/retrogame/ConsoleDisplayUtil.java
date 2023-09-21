@@ -109,7 +109,7 @@ public class ConsoleDisplayUtil {
         return color + ConsoleColor.BLACK_FG.toString() + string + ConsoleColor.RESET_COLOR;
     }
     
-    static String createStringWithDefaultColorAndReset(String string) {
+    public static String createStringWithDefaultColorAndReset(String string) {
         return BOARD_BACKGROUND_COLOR + string + ConsoleColor.RESET_COLOR;
     }
 }
