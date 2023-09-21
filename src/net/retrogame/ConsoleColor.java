@@ -15,8 +15,6 @@ public enum ConsoleColor {
     GRAY_FG("\u001B[90m"),
     GRAY_BG("\u001B[100m");
     
-    
-    
     public String colorString;
     
     ConsoleColor(String colorString) {

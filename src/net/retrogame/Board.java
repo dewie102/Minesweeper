@@ -134,14 +134,7 @@ public class Board {
             madeFirstClick = true;
         }
         
-        switch(tool) {
-            case CLICK:
-                actionWasTaken = new Click().execute(chosenTileInfo, this);
-                break;
-            case FLAG:
-                actionWasTaken = new Flag().execute(chosenTileInfo, this);
-                break;
-        }
+        actionWasTaken = ActionFactory.get(tool).execute(chosenTileInfo, this);
         
         checkForWinState();
 
