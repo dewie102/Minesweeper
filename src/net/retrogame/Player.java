@@ -2,11 +2,13 @@ package net.retrogame;
 
 import net.retrogame.tile.Tool;
 
+import java.io.FileWriter;
+import java.io.PrintWriter;
+
 public class Player {
     private String name;
     private int totalGamesPlayed = 0; //updated every call to newGame()
     private int totalWins = 0; //updated when the ending message is displayed
-    private int score = 0;
     private long bestTimeB = 0;
     private long bestTimeI = 0;
     private long bestTimeE = 0;
@@ -15,6 +17,15 @@ public class Player {
 
     public Player(String name) {
         this.name = name;
+    }
+
+    public Player(String name, int totalPlayed, int totalWins, long bestTimeB, long bestTimeI, long bestTimeE) {
+        setName(name);
+        setTotalGamesPlayed(totalPlayed);
+        setTotalWins(totalWins);
+        setBestTimeB(bestTimeB);
+        setBestTimeI(bestTimeI);
+        setBestTimeE(bestTimeE);
     }
 
     public void swapTool() {
@@ -60,8 +71,21 @@ public class Player {
             }
         }
 
-        System.out.println("LEVEL WAS IS: " + result);
         return result;
+    }
+
+    public void saveToCSVFile() {
+        try(PrintWriter out = new PrintWriter (new FileWriter("data/"+getName()+"-stats.csv"))) {
+            out.printf("%s,%s,%s,%s,%s,%s",getName(),getTotalGamesPlayed(),getTotalWins(),getBestTimeB(),getBestTimeI(),getBestTimeE());
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void loadFromCSVFile() {
+
     }
 
 
@@ -91,14 +115,6 @@ public class Player {
 
     public void setTotalWins(int totalWins) {
         this.totalWins = totalWins;
-    }
-
-    public int getScore() {
-        return score;
-    }
-
-    private void setScore(int score) {
-        this.score = score;
     }
 
     public Tool getCurrentTool() {
@@ -135,12 +151,11 @@ public class Player {
 
     @Override
     public String toString() {
-        return String.format("%s: name=%s, totalGamesPlayed=%s, totalWins=%s, score=%s, bestTime=%s, usingFlagTool=%s",
+        return String.format("%s: name=%s, totalGamesPlayed=%s, totalWins=%s, bestTime=%s, usingFlagTool=%s",
                 getClass().getSimpleName(),
                 getName(),
                 getTotalGamesPlayed(),
                 getTotalWins(),
-                getScore(),
                 getBestTimeB(),
                 getCurrentTool());
     }
