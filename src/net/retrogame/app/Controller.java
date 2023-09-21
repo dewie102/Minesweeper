@@ -21,6 +21,7 @@ public class Controller {
 
     private Board board;
     private Player player;
+    private PlayerStatsDisplay statsDisplay;
 
     public void execute() {
         welcome();
@@ -38,12 +39,13 @@ public class Controller {
     private void welcome() {
         System.out.println(fileLoader.getWelcomeString());
 
-        //pause
-        //Enter your name to continue:
-        //createUser uses that name
+        Console.pause(500);
+        System.out.println("Enter your name:");
+        String userInput = prompter.prompt("> ");
 
-        createUser("Josh");
+        createUser(userInput);
         actionHandler.setPlayer(player);
+        statsDisplay = new PlayerStatsDisplay(prompter);
     }
 
     public void newGame(DifficultyTuple difficulty) {
@@ -87,7 +89,7 @@ public class Controller {
         System.out.println();
         if (board.wasGameWon()){
             player.setTotalWins(player.getTotalWins() + 1);
-            player.updateBestTime(board.getPlayTime());
+            player.updateBestTime(board);
             System.out.println(fileLoader.getWinString());
         }
         else {
@@ -103,8 +105,10 @@ public class Controller {
         boolean validInput = false;
 
         System.out.println();
-        System.out.println("Would you like to play again? Enter [Y]es to start a new game " +
-                "or [N]o to quit.");
+        System.out.println("Would you like to play again? \n" +
+                "[Y]es to start a new game \n" +
+                "[N]o to quit \n" +
+                "[P] to view your current statistics");
         userInput = prompter.prompt("> ");
         while(!validInput) {
             if (userInput.toUpperCase().trim().equals("Y")) {
@@ -113,8 +117,18 @@ public class Controller {
             } else if (userInput.toUpperCase().trim().equals("N")) {
                 actionHandler.setRetry(false);
                 validInput = true;
-            } else {
-                prompter.prompt("Please enter a valid option: [Y] to start a new game, or [N] to quit.\n> ");
+            } else if (userInput.toUpperCase().trim().equals("P")) {
+                Console.clear();
+                statsDisplay.show(player);
+                promptUserForRetry();
+                validInput = true;
+            }
+            else {
+                System.out.println("Please enter a valid option:\n" +
+                        "[Y]es to start a new game \n" +
+                        "[N]o to quit \n" +
+                        "[P] to view your current statistics");
+                userInput = prompter.prompt("> ");
             }
         }
     }
