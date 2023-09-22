@@ -23,7 +23,6 @@ class HelpMenu {
         exitMenu();
     }
 
-    //TODO: only read the file once
     private void displayMenu() {
         System.out.println(menuString);
     }
@@ -34,7 +33,7 @@ class HelpMenu {
                 "\t\t---------\n" +
                 "\t\tBoard Key\n" +
                 "\t\t---------\n" +
-                "\t\t" + createStringWithDefaultColorAndReset("BLACK")      + " tiles are still covered\n" +
+                "\t\t" + createStringWithDefaultColorAndReset("GRAY")      + " tiles are still covered\n" +
 	            "\t\t" + createStringWithColorAndReset("YELLOW", YELLOW_BG) + " tiles have been flagged\n" +
                 "\t\t" + createStringWithColorAndReset("RED", RED_BG)       + " tiles are bombs\n" +
                 "\t\t" + createStringWithColorAndReset("GREEN", GREEN_BG) + " tiles have been uncovered and are NOT bombs\n");

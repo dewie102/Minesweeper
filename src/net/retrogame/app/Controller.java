@@ -61,7 +61,7 @@ public class Controller {
         //If user entered X to exit directly, all of this will be skipped.
         if (actionHandler.willRetry()) {
             Console.clear();
-            board.showBoard(); // Added a show board to show that you hit a bomb
+            board.showBoard();
             System.out.println();
             gameOverMessage();
             promptUserForRetry();
@@ -163,7 +163,6 @@ public class Controller {
     private void goodbye() {
         System.out.println();
         System.out.println("Thank you for playing!");
-        //TODO: ascii art sendoff
     }
 
 }
