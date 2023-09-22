@@ -70,8 +70,7 @@ public class Tile {
         return String.format("%s: currentState=%s, numberOfBombsNearby=%s, isBomb=%s",
                 getClass().getSimpleName(), getCurrentState().name(), getNumberOfBombsNearby(), isBomb());
     }
-    
-    // Make a smart enum to include all color properties
+
     public enum State {
         COVERED(ConsoleColor.RESET_COLOR, ConsoleColor.GRAY_BG),
         UNCOVERED(ConsoleColor.BLACK_FG, ConsoleColor.GREEN_BG),

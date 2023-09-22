@@ -44,8 +44,7 @@ public class ActionHandler {
 
         while(!validInput) {
             String invalidInputPrompt = "Please enter a valid input. Enter H if you need help.\n> ";
-            
-            // If we add more tools we will need to fix this first if statement
+
             if ("S".equals(userInput)){
                 player.swapTool();
                 validInput = true;

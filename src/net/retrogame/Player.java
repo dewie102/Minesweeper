@@ -56,7 +56,7 @@ public class Player {
                     if (getBestTimeE() == 0 || playTime < getBestTimeE()) {
                         setBestTimeE(playTime);
                     }
-                //custom sized board best time are not saved.
+                //custom sized board best time are not saved - this is intentional.
             }
         }
     }

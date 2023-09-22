@@ -41,7 +41,7 @@ public class ConsoleDisplayUtil {
         top.append("╔");
         top.append("═".repeat(BOARD_DISPLAY_SPACE));
         
-        // 1 less then getRows as we already did the first one
+        // 1 less than getRows as we already did the first one
         for(int column = 0; column < columns - 1; column++) {
             top.append("╦");
             top.append("═".repeat(BOARD_DISPLAY_SPACE));
@@ -63,7 +63,7 @@ public class ConsoleDisplayUtil {
         middle.append("╠");
         middle.append("═".repeat(BOARD_DISPLAY_SPACE));
         
-        // 1 less then getRows as we already did the first one
+        // 1 less than getRows as we already did the first one
         for(int column = 0; column < columns - 1; column++) {
             middle.append("╬");
             middle.append("═".repeat(BOARD_DISPLAY_SPACE));
@@ -84,7 +84,7 @@ public class ConsoleDisplayUtil {
         bottom.append("╚");
         bottom.append("═".repeat(BOARD_DISPLAY_SPACE));
         
-        // 1 less then getRows as we already did the first one
+        // 1 less than getRows as we already did the first one
         for(int column = 0; column < columns - 1; column++) {
             bottom.append("╩");
             bottom.append("═".repeat(BOARD_DISPLAY_SPACE));
